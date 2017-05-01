@@ -1,0 +1,162 @@
+2017.
+05. 01.
+	Making a plane with workstations and checkpoints (see more latter)
+			1. Canny
+			2. Brightness off
+			3. Hough transformation
+	Working on Canny edge detector
+		Start coding!
+		
+		
+
+04. 25.
+	Fix megfogató részek az eszközön
+		- szög -> fix pontok -> ROI meghatározása
+	    - nem parazita objektumok kiszûrése
+			Pl. fungus
+				hús cafatok
+				egyéb kosz
+				levegõ buborékok
+			élkereséssel valahogy ezeket elkülöníteni az eszköz szerkezetétõl
+				- élkeresésre 5letek voltak
+					Laplacian operator (out)
+					
+					Canny Edge detector
+						1. futattjuk egy üres eszközre -> alapstuktúra legyen csak (mérés elején megjegyzi az algoritmus)
+						2. futattjuk mérés közben az eszközre (parazita, fungus, húscafatok...)
+						3. a kapott képet kivonom az üresbõl
+							így a szerkezet - ami mérés közben nem változik - kiesik...
+							és csak a paraziták, egyéb objektumok maradnak bent.
+							
+					Fényerõsségbõl fakadó hibák kiküszöbölésére:
+						Mozgóablakban a kép pixeleinek a szórását (variancia) megnézem és ahol az ablaknál 6árán meredeken változni fog...
+						ott lesz parazita vagy más számunkra értelmes stuktúra
+						az egyéb kis fényerõsségbõl fakadó éleket ki tudjuk szûrni egy adaptív értékkel történõ metszéssel
+						szórás max: parazita, struktúra, egyéb szemét
+						szórás min: megint csak valami
+						és elmetszem mondjuk a max felénél vagy ahol értelmes eredményt fogok kapni
+						
+					ROI meghatározásához egyenesek megtalálása:
+						Hough transformation
+							Error: szakaszt nem tud megadni
+							Soltuion: probabilistic Hough transformation
+								Hough lines függvény MATLAB-ban
+									Mathworks
+				
+			
+
+
+04. 24.
+	ImageJ-ben való játszadozás a képpel
+		erosion, dilation, tresholdolások, egyéb modósítgatások a képpel
+			ROI meg6ározása
+				1. Green chanel kiválasztása (Split Channels)
+					ez volt a legjobb
+				2. Játék a Brightness/Contrast értékekkel
+					oszlopokstuktúra jól látszodjon
+				3. Make binary
+				4. oszlopok közötti távolság lemérése
+					ehhezviszonyítani a ROI sugarát
+						Analyze particles-nél a round value 
+						magába fordult spirál alakú parazita round value = 0.2-0.25
+				5. megfogható paraméterek a ROI meghatározásához
+					Centroid (KP.)
+					Center of mass (TKP.)
+				Mégis csak a szöget kellene megmérni!
+04. 20.
+	Fix pontok meghatározása
+		kör alakú oszlopokat meg6ározni, Icy + ImageJ programokkal
+		ezekhez képest sugárirányban meg6ározni a ROI-t
+		
+	Andrisnak összeszedni a anyagot
+		04. 25-én (kedden) délután konzultáció
+		
+04. 12.
+	New approaches for edge detection or localize other meaningful parts of the image
+		- ROI meg6ározása
+			azon kívül mindent kinullázni (SOLVED - de csak specifikált esetben)
+			Problem: kamera poríciójától függ, hogy hol lesznek a fix pontok
+			Soluiton: fixpontok meghatározása más módon
+				pl. bezárt szög...
+			
+			
+			
+			
+			
+04. 07.
+	Megvizsgálni a szaturációs adatokat!
+		2 tresholdot megpróbálni belõni hozzá
+	Algortimus láncolatban megpróbálni gondolkodni
+		lépésrõl lépésre kizárni az egyes zavaró tényezõket a képrõl
+		1. lépés: saturation
+			Cél: eszközt illetve minden gyengén szaturálodó anyagot kiszûrni
+			Result: avg paraméter beállításától függõen a húscafatok nagyrészét ki lehet szûrni
+		2. lépés: 2 treshold szint a szaturációra
+			Cél: trichinellánál erõsebben színezõdõ húscafatokat egy fölsõ trehsold-dal kiszûrni
+			Munka folyamat: treshold érték = 
+				trichinella értékek
+				S + output_bw-nél hagytam abba
+		3. lépés: dinamikus treshold-ok meg6ározása
+			
+		
+		
+
+04. 03.
+	- New approaches:
+		- edge detection
+			Prewitt 1st and 2nd (OFF)
+			Laplace operator (QUITE GOOD)
+			Canny Edge detector (UNDER PROCESSING)
+				a threshold 5letet fölhasználni az intenzitás threshold-okhoz is
+				
+		Az természet baromira zajos. Egész egyszerûen borzasztó bármi értelmeset is kiszûrni
+		ebbõl a zajból. :\
+		
+	- PRÓBÁLJUK MEG RÉGIÓKAT MEG6ÁROZNI, ÉS KÖZVELTELNÜL OTT KERESGÉLNI.
+	
+03. 24.
+	- a plot3-ak kiértékelése után:
+		- kör alakú szûrõn kívül minden mást ki lehet maszkolni
+		- önmagában a intenzitáson alapuló megfogása a parazitáknak kevés,
+		  muszály más dolgokat is beleépíteni az alogritmusba, hogy
+		  az 6ékonyan detektáljon
+
+03. 22.
+	- mérési eredmények képeire is megcsinálni a plot3-akat, hogy láthassuk a megvilágítás homogenitását
+	
+03. 21.
+	- a plot3-akat a sima és az output_fused képekere is beleírni a szakdolgozatba
+		colorbarokat is hozzátenni
+	
+
+
+02. 28.
+	1. step: Space determination
+		- Trying to determine the space with morphological operations, where the trichinellas would be
+		Megjegyzés:
+			- ha a szaturációval dolgozunk akkor a méréseknél nagyon oda kell figyelni,
+				hogy szinte majd mindegyiket azonos megvilágítás mellett vegyük föl
+			AVG
+			- az avg kivonása a szaturációból sokat elvesz a képbõl
+				avg értékének változtatgatásával a kép szaturációjára szabhatjuk a megoldást
+					ergo a jó megoldáshoz az avg értékét mindig változtatgatnunk kell
+						NO WAY -> a gép dolgozzon az ember helyett és ne fordítva
+			- a CM6-os mérésekhez 1.15*avg jó
+			AREA
+			- a CM6-os mérésekhez >15 területszûrés elég
+			
+			FÖLHASZNÁLÓ A TERÜLETET ÉS AZ AVG ÁLLÍTGATHASSA -> GUI
+			
+		! Vagy mindig állítgatjuk a paramétereket vagy más megoldást keresünk !
+			
+			Utolsó lépésel: morfológiai nyitás, skeletonizálás... már nem szükséges.
+				Ezt is bele lehetne építeni majd, hogy a feölhasználó adhassa meg, mert ha sok van akkor jól jön azért.
+
+	2. step: Substractaction
+		- Cut out the empty spaces between the two object
+		Megjegyzés:
+			- Ha a bináris maszkból számoljuk össze az alakzatok összterületét akkor ez a lépés el is hanyagolható
+				if bw2(n,m)==1 -> count+=count;
+
+	3. step: Measurement
+		- Trying to measurement the given beneficial space
