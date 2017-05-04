@@ -1,0 +1,21 @@
+Hysteresis thresholding parameters for varios inputs:
+	- Funghi:
+		max value = 457
+		t1 = 100
+		t2 = 80
+	- Little dirty
+		t1 = 150
+		t2 = 120
+	- Medium dirty
+		t1 = 120
+		t2 = 80
+	- Hard dirty
+		t1 = 180
+		t2 = 150
+	- Meat digestion
+		t1 = 180
+		t2 = 150
+	
+	Megjegyzések:
+		- Az él erőssége a megvilágítástól nagyban függ --> a treshol is ezáltal
+			él erőssége és a treshold között egyenes arányosság áll fönn

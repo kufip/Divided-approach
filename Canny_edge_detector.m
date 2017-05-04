@@ -12,43 +12,929 @@ meat_digestion = '.\meat_digestion.png';
 str_base = '.\input_images';
 filetype = '.jpg';
 
-% Reading the image
-f = imread(strcat(str_base,funghi));
+% 0. Reading the image
+f = imread(strcat(str_base,medium_dirty));
+%{
+figure(1)
+imshow(f)
+title('Original image')
+set(gcf, 'Position', [1367 41 1024 651])
+%}
 
-% Noise reduction with Gaussian kernel
-% esetleg majd megnézni parameter-t
+
+% 1. Noise reduction with Gaussian kernel
 f = double(rgb2gray(f));
-Gaussian = fspecial('Gaussian');
+Gaussian = fspecial('Gaussian',5);
 f = conv2(f,Gaussian);
 
-% Gradient intensity and direction calculation
+
+% 2. Gradient intensity and direction calculation
 Prewitt_h = fspecial('Prewitt');
 Prewitt_v = [-1 0 1; -1 0 1; -1 0 1];
 dx = conv2(f,Prewitt_h); %horizontal derivative image
 dy = conv2(f,Prewitt_v); %vertical derivative image
 d = hypot(dx,dy); %gradient intensity
 theta = atan2d(dx,dy); %edge direction
-
-% Non-maximum suppression
-for
-
 %{
-a=0;
-for n = 1:size(dy,1)
-    for m = 1:size(dy,2)
-        if theta(n,m) == 90 || theta(n,m) == -90
-            a = a+1;
-        end
+d_after_grad_inten = d;
+save('d_after_grad_inten.mat, 'd_after_grad_inten')
+load('d_after_grad_inten.mat')
+%}
+figure(2)
+imshow(uint8(d))
+title('Gradient intensity')
+set(gcf, 'Position', [1367 41 1024 651])
+
+imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
+
+
+% 3. Non-maximum suppression
+% széleknél rendesen kezelve
+% theta irányok 6árai --> -22.5-22.5, 22.5-77.5,...
+%{
+for n = 1:size(theta,1)
+    for m = 1:size(theta,2)
+        % fölsõ sor (OK)
+        if n == 1
+            if m == 1 % bal fölsõ sarok
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5  % 1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            elseif m == size(theta,2) % jobb fölsõ sarok
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            else % elsõ sor összes többi eleme
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                    if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end  
+        % alsó sor (OK)
+        elseif n == size(theta,1)
+            if m == 1 % bal alsó sarok
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5  % 1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end  
+            elseif m == size(theta,2) % jobb alsó sarok
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end   
+            else % alsó sor összes többi eleme
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                    if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        % bal széle (OK)
+        elseif m == 1
+            if 2<n<n-1 % bal fölsõ és alsó sarok már kezelve van
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1. 
+                    if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        % jobb széle (OK)
+        elseif m == size(theta,2)
+            if 2<n<n-1 % jobb fölsõ és alsó sarok már kezelve van
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                    if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        else % mátrixon belüli elemekre, pixelekre
+            % 1. edge direction
+            if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5
+                if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 2. edge direction
+            if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5
+                if d(n-1,m-1)<d(n,m) && d(n+1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 4. edge direction
+            if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5
+                if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 3. edge direction
+            if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5
+                if d(n+1,m-1)<d(n,m) && d(n-1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+        end 
     end
 end
 %}
-
-
-% figure(1)
-% imshow(uint8(f))
-
+% theta irányok 6árai --> 0-45, 45-90,...
+for n = 1:size(theta,1)
+    for m = 1:size(theta,2)
+        % fölsõ sor (OK)
+        if n == 1
+            if m == 1 % bal fölsõ sarok
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135  % 1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 45<theta(n,m)<=90 || -135<theta(n,m)<=-90 % 2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            elseif m == size(theta,2) % jobb fölsõ sarok
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 135<theta(n,m)<=180 || -45<theta(n,m)<=0 % 3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135 % 1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            else % elsõ sor összes többi eleme
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                    if d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                    if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end  
+        % alsó sor (OK)
+        elseif n == size(theta,1)
+            if m == 1 % bal alsó sarok
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135  % 1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 135<theta(n,m)<=180 || -45<theta(n,m)<=0 % 3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end  
+            elseif m == size(theta,2) % jobb alsó sarok
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135 % 1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end   
+            else % alsó sor összes többi eleme
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                    if d(n-1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                    if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        % bal széle (OK)
+        elseif m == 1
+            if 2<n<n-1 % bal fölsõ és alsó sarok már kezelve van
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135 % 1. 
+                    if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 45<theta(n,m)<=90 || -135<theta(n,m)<=-90 % 2.
+                    if d(n+1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 135<theta(n,m)<=180 || -45<theta(n,m)<=0 % 3.
+                    if d(n-1,m+1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        % jobb széle (OK)
+        elseif m == size(theta,2)
+            if 2<n<n-1 % jobb fölsõ és alsó sarok már kezelve van
+                if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135 % 1.
+                    if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 45<theta(n,m)<=90 || -135<theta(n,m)<=-90 % 2.
+                    if d(n-1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45 % 4.
+                    if d(n,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                if 135<theta(n,m)<=180 || -45<theta(n,m)<=0 % 3.
+                    if d(n+1,m-1)<d(n,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end
+        else % mátrixon belüli elemekre, pixelekre
+            % 1. edge direction
+            if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135
+                if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 2. edge direction
+            if 45<theta(n,m)<=90 || -135<theta(n,m)<=-90
+                if d(n-1,m-1)<d(n,m) && d(n+1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 4. edge direction
+            if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45
+                if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 3. edge direction
+            if 135<theta(n,m)<=180 || -45<theta(n,m)<=0
+                if d(n+1,m-1)<d(n,m) && d(n-1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+        end 
+    end
+end
+% széleknél 0-ra veszem
 %{
-figure(1)
+for n = 1:size(theta,1)
+    for m = 1:size(theta,2)
+        % fölsõ sor (OK)
+        if n == 1
+            if m == 1 % bal fölsõ sarok
+                d(n,m)=0;
+            elseif m == size(theta,2) % jobb fölsõ sarok
+                d(n,m)=0;
+            else % elsõ sor összes többi eleme
+                d(n,m)=0;
+            end  
+        % alsó sor (OK)
+        elseif n == size(theta,1)
+            if m == 1 % bal alsó sarok
+                d(n,m)=0;
+            elseif m == size(theta,2) % jobb alsó sarok
+                d(n,m)=0;
+            else % alsó sor összes többi eleme
+                d(n,m)=0;
+            end
+        % bal széle (OK)
+        elseif m == 1
+            if 2<n<n-1 % bal fölsõ és alsó sarok már kezelve van
+                d(n,m)=0;
+            end
+        % jobb széle (OK)
+        elseif m == size(theta,2)
+            if 2<n<n-1 % jobb fölsõ és alsó sarok már kezelve van
+                d(n,m)=0;
+            end
+        else % mátrixon belüli elemekre, pixelekre
+            % 1. edge direction
+            if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5
+                if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 2. edge direction
+            if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5
+                if d(n-1,m-1)<d(n,m) && d(n+1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 4. edge direction
+            if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5
+                if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+            % 3. edge direction
+            if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5
+                if d(n+1,m-1)<d(n,m) && d(n-1,m+1)<d(n,m)
+                    d(n,m)=d(n,m);
+                else
+                    d(n,m)=0;
+                end
+            end
+        end 
+    end
+end
+%}
+%{
+d_after_non_max_sup = d;
+save('d_after_non_max_sup.mat, 'd_after_non_max_sup')
+load('d_after_non_max_sup.mat')
+%}
+% Filled image nem zárta össze a szétszagatott struktúrákat
+%{
+d_filled = regionprops(d,'FilledImage');
+%}
+figure(3)
+imshow(uint8(d))
+title('Non max suppression')
+set(gcf, 'Position', [1367 41 1024 651])
+
+imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
+
+
+% 4. Hysteresis thresholding
+%{
+a = max(max(d));
+b = mean(mean(d));
+%}
+% Fordított élkeresés --> élkitöltés (tomorrow)
+t1 = 120; % t1-nél nagyobb tutira él
+t2 = 80; % t2-nél kisebb tuti nem él
+for n = 1:size(theta,1)
+    for m = 1:size(theta,2)
+        if t1<=d(n,m)
+            d(n,m)=d(n,m);
+        elseif d(n,m)<t2
+            d(n,m)=0;
+        elseif t2<=d(n,m)<t1 % biztonság kedvéért, de elhagy6ó
+            % fölsõ sor (OK)
+            if n == 1
+                if m == 1 % bal fölsõ sarok
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m+1) % ha legalább az egyik szomszédja az irányában él, akkor legyen õ is az..
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0; % ...máskülönben ne!
+                        end
+                    end
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5  % 1.
+                        if t1<=d(n+1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                        if t1<=d(n+1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                elseif m == size(theta,2) % jobb fölsõ sarok
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                        if t1<=d(n+1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                        if t1<=d(n+1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                else % elsõ sor összes többi eleme
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                        if t1<=d(n+1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                        if t1<=d(n+1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                        if t1<=d(n,m-1) || t1<=d(n,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                        if t1<=d(n+1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                end  
+            % alsó sor (OK)
+            elseif n == size(theta,1)
+                if m == 1 % bal alsó sarok
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5  % 1.
+                        if t1<=d(n-1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                        if t1<=d(n-1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end  
+                elseif m == size(theta,2) % jobb alsó sarok
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                        if t1<=d(n-1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                        if t1<=d(n-1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end   
+                else % alsó sor összes többi eleme
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 %1.
+                        if t1<=d(n-1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 %2.
+                        if t1<=d(n-1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 %4.
+                        if t1<=d(n,m-1) || t1<=d(n,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 %3.
+                        if t1<=d(n-1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                end
+            % bal széle (OK)
+            elseif m == 1
+                if 2<n<n-1 % bal fölsõ és alsó sarok már kezelve van
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1. 
+                        if t1<=d(n-1,m) || t1<=d(n+1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                        if t1<=d(n+1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                        if t1<=d(n-1,m+1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                end
+            % jobb széle (OK)
+            elseif m == size(theta,2)
+                if 2<n<n-1 % jobb fölsõ és alsó sarok már kezelve van
+                    if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5 % 1.
+                        if t1<=d(n-1,m) || t1<=d(n+1,m)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5 % 2.
+                        if t1<=d(n-1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5 % 4.
+                        if t1<=d(n,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                    if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5 % 3.
+                        if t1<=d(n+1,m-1)
+                            d(n,m)=d(n,m);
+                        else
+                            d(n,m)=0;
+                        end
+                    end
+                end
+            else % mátrixon belüli elemekre, pixelekre
+                % 1. edge direction
+                if -22.5<theta(n,m)<=22.5 || 157.5<theta(n,m)<=180 || -180<=theta(n,m)<=-157.5
+                    if t1<=d(n-1,m) || t1<=d(n+1,m)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                % 2. edge direction
+                if 22.5<theta(n,m)<=77.5 || -157.5<theta(n,m)<=-112.5
+                    if t1<=d(n-1,m-1) || t1<=d(n+1,m+1)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                % 4. edge direction
+                if 77.5<theta(n,m)<=122.5 || -112.5<theta(n,m)<=-67.5
+                    if t1<=d(n,m-1) || t1<=d(n,m+1)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+                % 3. edge direction
+                if 122.5<theta(n,m)<=157.5 || -67.5<theta(n,m)<=-22.5
+                    if t1<=d(n+1,m-1) || t1<=d(n-1,m+1)
+                        d(n,m)=d(n,m);
+                    else
+                        d(n,m)=0;
+                    end
+                end
+            end 
+        end
+    end
+end
+%{
+save('d_at_the_end.mat','d')
+%}
+figure(4)
+imshow(uint8(d))
+title('Hysteresis tresholding')
+% set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
+set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
+
+imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
+%{
+theta = atan2d(dy,dx); %edge direction
+dd = d;
+figure(4)
+imshow(imfuse(dd,d,'blend'))
+set(gcf,'Position',[1367 -91 1440 783])
+%}
+%{
+figure(5)
 subplot(221)
 imshow(uint8(dx))
 title('dx')

@@ -1,5 +1,8 @@
 function [output_fused,ratio] = divided_approach(image,GUI_avg,max_area)
-    
+
+    if nargin~=3
+        error('Too many or not enough input parameter!');
+    end
     % reading the image
 %     image=imread('D:\ITK\Microfluidics\2016_2017_02\Results\image processing\counting\trichinella\images\From_new_videoset.png');
     
@@ -48,7 +51,7 @@ function [output_fused,ratio] = divided_approach(image,GUI_avg,max_area)
     D=bwmorph(D, 'spur', 5);
     output_bw=bwmorph(D, 'clean');
     output_fused=imfuse(image, output_bw);
-    imwrite(output_fused,'output.jpg');
+%     imwrite(output_fused,'output.jpg');
 %     figure(1)
 %     imshow(output_fused)
 %     title('Result')

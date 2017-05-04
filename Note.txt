@@ -1,14 +1,66 @@
 2017.
-05. 01.
+05. 01.-03.
 	Making a plane with workstations and checkpoints (see more latter)
 			1. Canny
 			2. Brightness off
 			3. Hough transformation
 	Working on Canny edge detector
 		Start coding!
-		
-		
+		Noise reduciton (DONE)
+			- a blurr mértékével lehet még javítani a képen
+				- minél jobban elmossuk annál kevésbé fognak a kis zajok, objektumok látszódni
+					5x5-ös Gaussian kernel
+				ÖNLAB!
+				
+		Gradient intensity and direction calculation (DONE)
+			- Hough transformationt itt kell megejteni
+			- Prewitt kernel méretével lehet még javítani a képen
+				5x5-ös Prewitt kernel --> ilyet nem lehet, ez NO WAY!, ZSÁK UTCA!
+			- bwareafilt a kis élekre = tisztitás
+				nem jó, mert a d double és nem logical --> ZSÁK UTCA!
+			- theta = atan2d(dx,dy) & theta = atan2d(dy,dx) nincs számottevõ különbség
+				mind1 hogy melyiket használjuk
+				
+		Non-maximum suppression (DONE)
+			- szélek kezelése az egyedüli hibaforrás (Solved)
+				- széleknél csak az egyik szomszédos elemnél kell nagyobbnak lennie
+				  ha nem nem tudjuk mivel összehasonlítani, akkor 0-ra vesszük az értékét
+				- másik változat hogy a széleknél, sarkoknál 0-ra veszem
+					nincs sok eredménye --> ZSÁK UTCA!
+			- szétszedi az éleket (lásd after_non_max_supp.jpg & fuse_of_grad_int&non_max.jpg)
+				- a fokbeosztás változtatásával lehet még javítani a képen
+					sok változást ez sem hozott --> ZSÁK UTCA!
+					bár azért még 1x meg lehetne nézni a különbségüket
+				- talán FilledImage segíthet
+					nem, nem segített --> ZSÁK UTCA!
+					
+		Hysteresis thresholding (DONE)
+			- tresholdokat kikísérletezni hogy hol lesznek jó helyen
+				Minden bemenetre mások --> NEM ROBOSZTUS A PROGRAM
+				Pl. Funghi:
+						max value = 457
+						t1 = 100
+						t2 = 80
+			- nem csökkentjük az éleket, hanem...
+			  ... pont az ellenkezõjét csináljuk...
+			  ... így a szagatott részeket ki tudnánk tölteni...
+			  ... általunk választott pixel értékekkel, amik...
+			  ... késõbb nagyban megkönnyíthetik a dolgunkat.
+			  NEM SEGÍT, mert szagatottság már a Non-max lépésnél kialakul.
+	
+		Megjegyzések:
+			- széleknél valamiért csinál egy fehér sávot
+			- labor monitorra:
+				set(gcf,'Position',[1367 -91 1440 783])
+			- otthoni monitorra:
+				set(gcf, 'Position', [1367 41 1024 651])
+					1.szám = x position
+					2.szám = y position
+					3.szám = screen width
+					4.szám = screen height
 
+
+	
 04. 25.
 	Fix megfogató részek az eszközön
 		- szög -> fix pontok -> ROI meghatározása
@@ -35,6 +87,7 @@
 						szórás max: parazita, struktúra, egyéb szemét
 						szórás min: megint csak valami
 						és elmetszem mondjuk a max felénél vagy ahol értelmes eredményt fogok kapni
+						CANNY TULAJDONKÉPPEN MEGOLDJA!!!
 						
 					ROI meghatározásához egyenesek megtalálása:
 						Hough transformation

@@ -1,28 +1,28 @@
 function varargout = simple_decision_0(varargin)
-% SIMPLE_DECISION_0 MATLAB code for simple_decision_0.fig
-%      SIMPLE_DECISION_0, by itself, creates a new SIMPLE_DECISION_0 or raises the existing
+% SIMPLE_DECISION MATLAB code for simple_decision.fig
+%      SIMPLE_DECISION, by itself, creates a new SIMPLE_DECISION or raises the existing
 %      singleton*.
 %
-%      H = SIMPLE_DECISION_0 returns the handle to a new SIMPLE_DECISION_0 or the handle to
+%      H = SIMPLE_DECISION returns the handle to a new SIMPLE_DECISION or the handle to
 %      the existing singleton*.
 %
-%      SIMPLE_DECISION_0('CALLBACK',hObject,eventData,handles,...) calls the local
+%      SIMPLE_DECISION('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in SIMPLE_DECISION_0.M with the given input arguments.
 %
-%      SIMPLE_DECISION_0('Property','Value',...) creates a new SIMPLE_DECISION_0 or raises the
+%      SIMPLE_DECISION('Property','Value',...) creates a new SIMPLE_DECISION or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
 %      applied to the GUI before simple_decision_0_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to simple_decision_0_OpeningFcn via varargin.
+%      stop.  All inputs are passed to simple_decision_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help simple_decision_0
+% Edit the above text to modify the response to help simple_decision
 
-% Last Modified by GUIDE v2.5 03-Apr-2017 21:51:15
+% Last Modified by GUIDE v2.5 04-May-2017 09:36:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -44,21 +44,21 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before simple_decision_0 is made visible.
+% --- Executes just before simple_decision is made visible.
 function simple_decision_0_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to simple_decision_0 (see VARARGIN)
+% varargin   command line arguments to simple_decision (see VARARGIN)
 
-% Choose default command line output for simple_decision_0
+% Choose default command line output for simple_decision
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes simple_decision_0 wait for user response (see UIRESUME)
+% UIWAIT makes simple_decision wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
@@ -86,18 +86,10 @@ if user_canceled
     return
 end
 im = imread(path);
-axes(handles.picture);
+axes(handles.saturation);
 imshow(im);
-axes(handles.histogram);
-bar(0:255,histogram(im));
-xlim([0 255])
-xlabel('intensity value')
-ylabel('number of occurences')
-% axes(handles.plot_3)
-% [x y] = meshgrid(0:1:size(histogram(im),1),0:1:max(histogram(im)));
-% z = histogram(im);
-% surf(x,y,z);
-% colormap hot
+axes(handles.Canny);
+imshow(im);
 
 
 
@@ -110,13 +102,10 @@ function reset_button_Callback(hObject, eventdata, handles)
 % here we reset the original image
 global im im2 % global-ra nincs szükség
 im2 = im; % for backup process :)
-axes(handles.picture);
+axes(handles.saturation);
 imshow(im2);
-axes(handles.histogram);
-bar(0:255,histogram(im));
-xlim([0 255])
-xlabel('intensity value')
-ylabel('number of occurences')
+axes(handles.Canny);
+imshow(im2);
 
 
 
@@ -130,7 +119,6 @@ function area_editor_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of area_editor as a double
 global max_area
 max_area = str2num(get(hObject,'String'));
-
 % --- Executes during object creation, after setting all properties.
 function area_editor_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to area_editor (see GCBO)
@@ -142,7 +130,7 @@ function area_editor_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+%{
 % --- Executes on button press in area_editor_button.
 function area_editor_button_Callback(hObject, eventdata, handles)
 % hObject    handle to area_editor_button (see GCBO)
@@ -152,13 +140,9 @@ global im max_area slider_val
 % ha 1.-re a területtet hívjuk meg, akkor a legutóbbi használat utolsó
 % slider_val értékével dolgozik
 [output_img ratio] = divided_approach(im,slider_val,max_area);
-axes(handles.picture)
+axes(handles.saturation)
 imshow(output_img)
-axes(handles.histogram);
-bar(0:255,histogram(output_img));
-xlim([0 255])
-xlabel('intensity value')
-ylabel('number of occurences')
+%}
 
 
 
@@ -180,15 +164,9 @@ slider_val = get(hObject,'Value');
 %     return
 % end
 [output_img ratio] = divided_approach(im,slider_val,max_area); % ratio-t megjelenítését belefûzni!
-axes(handles.picture)
+axes(handles.saturation)
 imshow(output_img)
 set(handles.avg_value_screen,'String',num2str(slider_val));
-axes(handles.histogram);
-bar(0:255,histogram(output_img));
-xlim([0 255])
-xlabel('intensity value')
-ylabel('number of occurences')
-
 % --- Executes during object creation, after setting all properties.
 function avg_slider_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to avg_slider (see GCBO)
@@ -200,9 +178,6 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
 
-
-
-
 function avg_editor_Callback(hObject, eventdata, handles)
 % hObject    handle to avg_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -211,7 +186,6 @@ function avg_editor_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of avg_editor as a double
 global avg_editor
 avg_editor = str2num(get(hObject,'String'));
-
 % --- Executes during object creation, after setting all properties.
 function avg_editor_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to avg_editor (see GCBO)
@@ -224,38 +198,59 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes on button press in avg_editor_button.
-function avg_editor_button_Callback(hObject, eventdata, handles)
-% hObject    handle to avg_editor_button (see GCBO)
+function avg_value_screen_Callback(hObject, eventdata, handles)
+% hObject    handle to avg_value_screen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hints: get(hObject,'String') returns contents of avg_value_screen as text
+%        str2double(get(hObject,'String')) returns contents of avg_value_screen as a double
+% --- Executes during object creation, after setting all properties.
+function avg_value_screen_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to avg_value_screen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes on button press in avg_area_editor_button.
+function avg_area_editor_button_Callback(hObject, eventdata, handles)
+% hObject    handle to avg_area_editor_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % here we execute the modifications of avg_editor textbox
 global im max_area avg_editor
 [output_img ratio] = divided_approach(im,avg_editor,max_area); % ratio-t megjelenítését belefûzni!
-axes(handles.picture)
+axes(handles.saturation)
 imshow(output_img)
 set(handles.avg_value_screen,'String',avg_editor);
 % set(handles.avg_slider,'String',num2str(avg_editor));
-axes(handles.histogram);
-bar(0:255,histogram(output_img));
-xlim([0 255])
-xlabel('intensity value')
-ylabel('number of occurences')
 
 
 
 
-function avg_value_screen_Callback(hObject, eventdata, handles)
-% hObject    handle to avg_value_screen (see GCBO)
+% --- Executes on button press in save_sat_button.
+function save_sat_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_sat_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+% here we execute the saving of output images
+global im
+axes(handles.saturation);
+[im,user_canceled] = imsave(); % OPEN IMAGE dialog box
+if user_canceled
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
+    return
+end
 
-% Hints: get(hObject,'String') returns contents of avg_value_screen as text
-%        str2double(get(hObject,'String')) returns contents of avg_value_screen as a double
+
+
 
 % --- Executes during object creation, after setting all properties.
-function avg_value_screen_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to avg_value_screen (see GCBO)
+function thresh1_editor_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to thresh1_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -264,18 +259,57 @@ function avg_value_screen_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in save_button.
-function save_button_Callback(hObject, eventdata, handles)
-% hObject    handle to save_button (see GCBO)
+function thresh1_editor_Callback(hObject, eventdata, handles)
+% hObject    handle to thresh1_editor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% here we execute the saving of output images
+% Hints: get(hObject,'String') returns contents of thresh1_editor as text
+%        str2double(get(hObject,'String')) returns contents of thresh1_editor as a double
+global t1
+t1 = str2num(get(hObject,'String'));
+
+% --- Executes during object creation, after setting all properties.
+function thresh2_editor_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to thresh2_editor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function thresh2_editor_Callback(hObject, eventdata, handles)
+% hObject    handle to thresh2_editor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hints: get(hObject,'String') returns contents of thresh2_editor as text
+%        str2double(get(hObject,'String')) returns contents of thresh2_editor as a doubl
+global t2
+t2 = str2num(get(hObject,'String'));
+
+% --- Executes on button press in thresholds_button.
+function thresholds_button_Callback(hObject, eventdata, handles)
+% hObject    handle to thresholds_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global im t1 t2
+[output_img] = Canny_edge_detector_func(im,t1,t2);
+axes(handles.Canny)
+imshow(output_img)
+
+
+
+
+% --- Executes on button press in save_Canny_button.
+function save_Canny_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_Canny_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 global im
-axes(handles.picture);
+axes(handles.Canny);
 [im,user_canceled] = imsave(); % OPEN IMAGE dialog box
 if user_canceled
-    msgbox(sprintf('Cannot save the image'),'Error','error');
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
     return
 end
