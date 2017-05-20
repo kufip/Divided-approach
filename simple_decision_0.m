@@ -22,7 +22,7 @@ function varargout = simple_decision_0(varargin)
 
 % Edit the above text to modify the response to help simple_decision
 
-% Last Modified by GUIDE v2.5 04-May-2017 09:36:08
+% Last Modified by GUIDE v2.5 10-May-2017 14:20:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -79,13 +79,14 @@ function load_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % here we load the image
-global im
+global im im2
 [path,user_canceled]=imgetfile(); % OPEN IMAGE dialog box
 if user_canceled
     msgbox(sprintf('Cannot load the image'),'Error','error');
     return
 end
 im = imread(path);
+im2 = im; % for backup process :)
 axes(handles.saturation);
 imshow(im);
 axes(handles.Canny);
@@ -101,7 +102,6 @@ function reset_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % here we reset the original image
 global im im2 % global-ra nincs szükség
-im2 = im; % for backup process :)
 axes(handles.saturation);
 imshow(im2);
 axes(handles.Canny);
@@ -304,6 +304,35 @@ imshow(output_img)
 % --- Executes on button press in save_Canny_button.
 function save_Canny_button_Callback(hObject, eventdata, handles)
 % hObject    handle to save_Canny_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global im
+axes(handles.Canny);
+[im,user_canceled] = imsave(); % OPEN IMAGE dialog box
+if user_canceled
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
+    return
+end
+
+
+% --- Executes on button press in fuse_button.
+function fuse_button_Callback(hObject, eventdata, handles)
+% hObject    handle to fuse_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global im im2 max_area avg_editor t1 t2
+[output_img_sat ratio] = divided_approach(im,avg_editor,max_area);
+[output_img_Canny] = Canny_edge_detector_func(im,t1,t2);
+fused = imfuse(output_img_sat,output_img_Canny);
+axes(handles.saturation);
+imshow(im2);
+axes(handles.Canny);
+imshow(fused);
+
+
+% --- Executes on button press in save_fuse_button.
+function save_fuse_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_fuse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global im

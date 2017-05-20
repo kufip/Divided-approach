@@ -1,8 +1,9 @@
 clear all
 close all
-load('sat_bw.mat')
+clc
+load('.\Mats\Saturation mats\sat_bw.mat')
 
-I = imread('.\hard_dirty.png');
+I = imread('.\input_images\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para3.png');
 
 % for presentation
 %{
@@ -44,10 +45,9 @@ level=graythresh(output_lap);
 bw_lap=im2bw(output_lap, level);
 CC = bwconncomp(bw_lap);
 stats = regionprops(CC, 'Area');
+
+
 %{
-figure(1)
-imshow(bw_lap)
-%}
 for y = 1:size(bw_lap,1) % y a sor
     for x = 1:size(bw_lap,2) % x az oszlop
         if y < 11
@@ -64,7 +64,7 @@ for y = 1:size(bw_lap,1) % y a sor
         end
     end
 end
-
+%}
 % figure(2)
 % imshow(bw_lap)
 
@@ -73,10 +73,15 @@ end
 % bw_boundingbox = regionprops(bw_lap, 'BoundingBox');
 
 % probe with the 
-bw_lap_area_filt = bwareafilt(bw_lap, [500 Inf]); % 500-nál kisebb objektumokat szûrõm ki
+bw_lap_area_filt = bwareafilt(bw_lap, [1000 Inf]); % 500-nál kisebb objektumokat szûrõm ki
 % bw_lap_area_filt = bwareafilt(bw_lap_area_filt, [750 1000]);
 bw_filled = regionprops(bw_lap_area_filt,'FilledImage');
-
+figure(1)
+% subplot(121)
+% imshow(bw_lap)
+% subplot(122)
+imshow(bw_lap_area_filt)
+imwrite(bw_lap_area_filt, 'para1_1000.jpg')
 % figure(5)
 % imshow(bw_filled(1).FilledImage)
 % 

@@ -1,8 +1,8 @@
 clear all
 close all
 % function [output_bw, output_fused] = ip_find_parasites (image)
-dot = '.\';
-name = 'hard_dirty.png'; % name of the input image
+dot = '.\input_images\';
+name = 'CMF3_E7_7_Trichinella_live_50mlph_4x_v1_eleje.png'; % name of the input image
 f_name = strcat(dot,name);
 image = imread(f_name);
 %{
@@ -112,7 +112,7 @@ title('DOG with conv_2')
 
 S = imadjust(S); % kontraszt korrekcó
  % pixel intenzitások átlaga
-GUI_avg = 1.25;
+GUI_avg = 1.75;
 avg = GUI_avg*(mean2(S));
 %{
 figure(2)
@@ -419,10 +419,12 @@ title('kis leágazások eltávolítása')
 
 % zajok eltávolítása
 output_bw = bwmorph(D, 'clean');
-save('sat_bw.mat','output_bw');
+save('sat_bw_9.mat','output_bw');
 
 figure(10)
 imshow(output_bw)
+figure(11)
+imshow(bw2)
 
 % reprezentációhoz kell
 output_fused = imfuse(image, output_bw);
@@ -439,15 +441,15 @@ imwrite(output_fused, out);
 
 % Measurement
 count = 0;
-for n = 1:size(bw2,1)
-    for m = 1:size(bw2,2)
-        if (bw2(n,m) == 1)
+for n = 1:size(output_bw,1)
+    for m = 1:size(output_bw,2)
+        if (output_bw(n,m) == 1)
             count = count+1;
         end
     end
 end
 
-all_pixel = size(bw2,1)*size(bw2,2);
+all_pixel = size(output_bw,1)*size(output_bw,2);
 ratio = count/all_pixel;
 
 % Megnézni hogy az utolsó mûveleteknél mennyi infó veszik el!

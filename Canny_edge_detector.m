@@ -2,6 +2,9 @@ clear all
 close all
 clc %clear the Command Window
 
+d_empty = load('.\Mats\Canny edge detector mats\d_empty.mat'); % mindig egy struct-ot fog betölteni,...
+% ezért d_empty.d-vel tudom meghívni a d mátrixot benne
+
 % filenamekkel majd elszórakozni - output .png.jpg
 % beolvasásnál esetleg majd számozásos rákérdezés
 funghi = '.\funghi.png';
@@ -9,11 +12,16 @@ little_dirty = '.\little_dirty.png';
 medium_dirty = '.\medium_dirty.png';
 hard_dirty = '.\hard_dirty.png';
 meat_digestion = '.\meat_digestion.png';
+empty_structure = '.\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_eleje.png';
+para1 = '.\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para1.png';
+para3 = '.\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para3.png';
+para6 = '.\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para6.png';
+para9 = '.\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para9.png';
 str_base = '.\input_images';
 filetype = '.jpg';
 
 % 0. Reading the image
-f = imread(strcat(str_base,medium_dirty));
+f = imread(strcat(str_base,para3));
 %{
 figure(1)
 imshow(f)
@@ -26,6 +34,11 @@ set(gcf, 'Position', [1367 41 1024 651])
 f = double(rgb2gray(f));
 Gaussian = fspecial('Gaussian',5);
 f = conv2(f,Gaussian);
+%{
+figure(1)
+imshow(uint8(f))
+imwrite(uint8(f),'little_dirty_Gaussian.jpg')
+%}
 
 
 % 2. Gradient intensity and direction calculation
@@ -39,13 +52,18 @@ theta = atan2d(dx,dy); %edge direction
 d_after_grad_inten = d;
 save('d_after_grad_inten.mat, 'd_after_grad_inten')
 load('d_after_grad_inten.mat')
-%}
+
 figure(2)
 imshow(uint8(d))
 title('Gradient intensity')
 set(gcf, 'Position', [1367 41 1024 651])
-
-imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
+%}
+d = minus(d,d_empty.d);
+%{
+% imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
+% figure(10)
+% imshow(uint8(d))
+%}
 
 
 % 3. Non-maximum suppression
@@ -639,13 +657,13 @@ load('d_after_non_max_sup.mat')
 % Filled image nem zárta össze a szétszagatott struktúrákat
 %{
 d_filled = regionprops(d,'FilledImage');
-%}
+
 figure(3)
 imshow(uint8(d))
 title('Non max suppression')
 set(gcf, 'Position', [1367 41 1024 651])
-
-imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
+%}
+% imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
 
 
 % 4. Hysteresis thresholding
@@ -654,8 +672,8 @@ a = max(max(d));
 b = mean(mean(d));
 %}
 % Fordított élkeresés --> élkitöltés (tomorrow)
-t1 = 120; % t1-nél nagyobb tutira él
-t2 = 80; % t2-nél kisebb tuti nem él
+t1 = 100; % t1-nél nagyobb tutira él
+t2 = 50; % t2-nél kisebb tuti nem él
 for n = 1:size(theta,1)
     for m = 1:size(theta,2)
         if t1<=d(n,m)
@@ -923,9 +941,11 @@ figure(4)
 imshow(uint8(d))
 title('Hysteresis tresholding')
 % set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
-set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
+% set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
 
-imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
+
+% imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
+save('d_empty.mat','d')
 %{
 theta = atan2d(dy,dx); %edge direction
 dd = d;
@@ -952,4 +972,4 @@ title('dyy')
 
 % writing out the output image
 % output_filename = strcat(funghi,filetype);
-% imwrite(output,output_filename);
+imwrite(uint8(d),'d.png');

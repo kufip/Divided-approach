@@ -1,4 +1,4 @@
-function [output_image] = Canny_edge_detector_func(image,thresh1,thresh2)
+function [output_image,d] = Canny_edge_detector_func(image,thresh1,thresh2)
 
     % initiation problems
     if nargin~=3 % control the no. of inputs
@@ -550,3 +550,4 @@ function [output_image] = Canny_edge_detector_func(image,thresh1,thresh2)
     end
 
     output_image = uint8(d);
+end

@@ -1,4 +1,4 @@
-function [output_fused,ratio] = divided_approach(image,GUI_avg,max_area)
+function [output_fused,output_bw] = divided_approach(image,GUI_avg,max_area)
 
     if nargin~=3
         error('Too many or not enough input parameter!');
@@ -56,5 +56,5 @@ function [output_fused,ratio] = divided_approach(image,GUI_avg,max_area)
 %     imshow(output_fused)
 %     title('Result')
     
-    ratio = div_appr_meas(bw2);
+%     ratio = div_appr_meas(bw2);
 end
