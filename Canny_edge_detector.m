@@ -7,6 +7,8 @@ d_empty = load('.\Mats\Canny edge detector mats\d_empty.mat'); % mindig egy stru
 
 % filenamekkel majd elszórakozni - output .png.jpg
 % beolvasásnál esetleg majd számozásos rákérdezés
+sample_0 = '.\sample_2.png';
+sample_1 = '.\sample_3.png';
 funghi = '.\funghi.png';
 little_dirty = '.\little_dirty.png';
 medium_dirty = '.\medium_dirty.png';
@@ -21,14 +23,13 @@ str_base = '.\input_images';
 filetype = '.jpg';
 
 % 0. Reading the image
-f = imread(strcat(str_base,para3));
+f = imread(strcat(str_base,medium_dirty));
 %{
 figure(1)
 imshow(f)
 title('Original image')
 set(gcf, 'Position', [1367 41 1024 651])
 %}
-
 
 % 1. Noise reduction with Gaussian kernel
 f = double(rgb2gray(f));
@@ -48,23 +49,38 @@ dx = conv2(f,Prewitt_h); %horizontal derivative image
 dy = conv2(f,Prewitt_v); %vertical derivative image
 d = hypot(dx,dy); %gradient intensity
 theta = atan2d(dx,dy); %edge direction
-%{
-d_after_grad_inten = d;
-save('d_after_grad_inten.mat, 'd_after_grad_inten')
-load('d_after_grad_inten.mat')
 
+
+% d_base = d;
+% save('d_base.mat', 'd_base')
+% dd = load('.\Mats\Canny edge detector mats\d_base.mat');
+%{
 figure(2)
 imshow(uint8(d))
 title('Gradient intensity')
 set(gcf, 'Position', [1367 41 1024 651])
 %}
-d = minus(d,d_empty.d);
+% ddd = minus(d,dd.d_base);
+figure(1)
+% subplot(121)
+imshow(uint8(d))
+set(gcf,'Position',[1367 -91 1440 783])
+imwrite(uint8(d),'Before_variance_window.png');
 %{
 % imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
 % figure(10)
 % imshow(uint8(d))
 %}
 
+
+
+d = Adaptive_thresholding(d,100);
+figure(2)
+imshow(uint8(d))
+set(gcf,'Position',[1367 -91 1440 783])
+imwrite(uint8(d),'After_variance_window.png');
+
+a=5;
 
 % 3. Non-maximum suppression
 % széleknél rendesen kezelve
@@ -547,7 +563,7 @@ for n = 1:size(theta,1)
         else % mátrixon belüli elemekre, pixelekre
             % 1. edge direction
             if 0<theta(n,m)<=45 || -180<=theta(n,m)<=-135
-                if d(n-1,m)<d(n,m) && d(n+1,m)<d(n,m)
+                if d(n-1,m)<d(n,m) || d(n+1,m)<d(n,m)
                     d(n,m)=d(n,m);
                 else
                     d(n,m)=0;
@@ -555,7 +571,7 @@ for n = 1:size(theta,1)
             end
             % 2. edge direction
             if 45<theta(n,m)<=90 || -135<theta(n,m)<=-90
-                if d(n-1,m-1)<d(n,m) && d(n+1,m+1)<d(n,m)
+                if d(n-1,m-1)<d(n,m) || d(n+1,m+1)<d(n,m)
                     d(n,m)=d(n,m);
                 else
                     d(n,m)=0;
@@ -563,7 +579,7 @@ for n = 1:size(theta,1)
             end
             % 4. edge direction
             if 90<theta(n,m)<=135 || -90<theta(n,m)<=-45
-                if d(n,m-1)<d(n,m) && d(n,m+1)<d(n,m)
+                if d(n,m-1)<d(n,m) || d(n,m+1)<d(n,m)
                     d(n,m)=d(n,m);
                 else
                     d(n,m)=0;
@@ -571,7 +587,7 @@ for n = 1:size(theta,1)
             end
             % 3. edge direction
             if 135<theta(n,m)<=180 || -45<theta(n,m)<=0
-                if d(n+1,m-1)<d(n,m) && d(n-1,m+1)<d(n,m)
+                if d(n+1,m-1)<d(n,m) || d(n-1,m+1)<d(n,m)
                     d(n,m)=d(n,m);
                 else
                     d(n,m)=0;
@@ -580,6 +596,9 @@ for n = 1:size(theta,1)
         end 
     end
 end
+figure(2)
+imshow(uint8(d))
+set(gcf,'Position',[1367 -91 1440 783])
 % széleknél 0-ra veszem
 %{
 for n = 1:size(theta,1)
@@ -672,8 +691,8 @@ a = max(max(d));
 b = mean(mean(d));
 %}
 % Fordított élkeresés --> élkitöltés (tomorrow)
-t1 = 100; % t1-nél nagyobb tutira él
-t2 = 50; % t2-nél kisebb tuti nem él
+t1 = 120; % t1-nél nagyobb tutira él
+t2 = 80; % t2-nél kisebb tuti nem él
 for n = 1:size(theta,1)
     for m = 1:size(theta,2)
         if t1<=d(n,m)
@@ -940,12 +959,12 @@ save('d_at_the_end.mat','d')
 figure(4)
 imshow(uint8(d))
 title('Hysteresis tresholding')
-% set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
+set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
 % set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
 
 
-% imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
-save('d_empty.mat','d')
+imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
+% save('d_empty.mat','d')
 %{
 theta = atan2d(dy,dx); %edge direction
 dd = d;
@@ -972,4 +991,4 @@ title('dyy')
 
 % writing out the output image
 % output_filename = strcat(funghi,filetype);
-imwrite(uint8(d),'d.png');
+% imwrite(uint8(d),'d.png');
