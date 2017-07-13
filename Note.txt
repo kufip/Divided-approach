@@ -1,4 +1,35 @@
 2017.
+07. 13.
+	- adaptív értékes metszés
+		- a<30 esetén már parazita infó vesztés, de...
+			a=>30-nál viszont nincs számottevõ változás az algoritmus végén
+			Magyarázat: Hysterises step sokkal erõsebb, mint az adaptív értékes metszés
+	- edge enhancement
+		- 
+	
+07. 12.
+	- distraction mûködik
+	- adaptív értékes metszés
+		- 6ákonyan mûködik, de a threshold értékét még be kell lõni
+			- a<100
+	- Non-max lépésnél ha && helyett || a két szomszéd magnitudra, akkor tisztább éleket kapunk
+	
+07. 11.
+	- isempty() + msgbox() elsõ hívásos próblémára a két OK + a Restore buttonnál is jó megoldás
+	- pontok összekötése
+		- a legtöbb infót a Non-max suppressionnél veszítjük
+
+05. 10. 
+	- imfuse képnél a...
+		- neon zöld a Saturation detector eredménye
+		- rózsaszín a Canny edge detector eredménye
+
+05. 08.
+	A mûtermékekre is egységnyi terület számítás.
+		funghi
+		húscafat
+		egyéb koszok
+	
 05. 01.-03.
 	Making a plane with workstations and checkpoints (see more latter)
 			1. Canny
@@ -17,7 +48,7 @@
 			- Prewitt kernel méretével lehet még javítani a képen
 				5x5-ös Prewitt kernel --> ilyet nem lehet, ez NO WAY!, ZSÁK UTCA!
 			- bwareafilt a kis élekre = tisztitás
-				nem jó, mert a d double és nem logical --> ZSÁK UTCA!
+				nem jó, mert a 'd' double és nem logical --> ZSÁK UTCA!
 			- theta = atan2d(dx,dy) & theta = atan2d(dy,dx) nincs számottevõ különbség
 				mind1 hogy melyiket használjuk
 				
@@ -81,13 +112,15 @@
 							és csak a paraziták, egyéb objektumok maradnak bent.
 							
 					Fényerõsségbõl fakadó hibák kiküszöbölésére:
-						Mozgóablakban a kép pixeleinek a szórását (variancia) megnézem és ahol az ablaknál 6árán meredeken változni fog...
+						Mozgóablakban a kép pixeleinek a szórását (variancia) megnézem és ahol az ablak 6árán meredeken változni fog...
 						ott lesz parazita vagy más számunkra értelmes stuktúra
-						az egyéb kis fényerõsségbõl fakadó éleket ki tudjuk szûrni egy adaptív értékkel történõ metszéssel
+						Az egyéb kis fényerõsségbõl fakadó éleket ki tudjuk szûrni egy adaptív értékkel történõ metszéssel
 						szórás max: parazita, struktúra, egyéb szemét
 						szórás min: megint csak valami
 						és elmetszem mondjuk a max felénél vagy ahol értelmes eredményt fogok kapni
 						CANNY TULAJDONKÉPPEN MEGOLDJA!!!
+						A kis méretû objektumokra jó: Hysteresis után a kis pixeleket el tudjuk távolítani! (egyéb koszokat)
+							Parazita szaturációhoz közeli objektumok esetén a trehold értékét közelíteni kell a parazita szathoz.
 						
 					ROI meghatározásához egyenesek megtalálása:
 						Hough transformation
