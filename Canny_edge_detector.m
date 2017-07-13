@@ -50,37 +50,37 @@ dy = conv2(f,Prewitt_v); %vertical derivative image
 d = hypot(dx,dy); %gradient intensity
 theta = atan2d(dx,dy); %edge direction
 
-
-% d_base = d;
-% save('d_base.mat', 'd_base')
-% dd = load('.\Mats\Canny edge detector mats\d_base.mat');
+figure(1)
+imshow(uint8(d))
+title('Before adaptive thresholding')
+set(gcf,'Position',[1367 -91 1440 783])
+% imwrite(uint8(d),'Before_variance_window.png');
 %{
+d_base = d;
+save('d_base.mat', 'd_base')
+dd = load('.\Mats\Canny edge detector mats\d_base.mat');
+
 figure(2)
 imshow(uint8(d))
 title('Gradient intensity')
 set(gcf, 'Position', [1367 41 1024 651])
+
+ddd = minus(d,dd.d_base);
 %}
-% ddd = minus(d,dd.d_base);
-figure(1)
-% subplot(121)
-imshow(uint8(d))
-set(gcf,'Position',[1367 -91 1440 783])
-imwrite(uint8(d),'Before_variance_window.png');
 %{
 % imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
 % figure(10)
 % imshow(uint8(d))
 %}
 
-
-
-d = Adaptive_thresholding(d,100);
+d = Adaptive_thresholding(d,20);
 figure(2)
 imshow(uint8(d))
+title('After adaptive thresholding')
 set(gcf,'Position',[1367 -91 1440 783])
 imwrite(uint8(d),'After_variance_window.png');
 
-a=5;
+
 
 % 3. Non-maximum suppression
 % széleknél rendesen kezelve
@@ -596,8 +596,9 @@ for n = 1:size(theta,1)
         end 
     end
 end
-figure(2)
+figure(3)
 imshow(uint8(d))
+title('Non-max suppresssion')
 set(gcf,'Position',[1367 -91 1440 783])
 % széleknél 0-ra veszem
 %{
@@ -672,24 +673,20 @@ end
 d_after_non_max_sup = d;
 save('d_after_non_max_sup.mat, 'd_after_non_max_sup')
 load('d_after_non_max_sup.mat')
-%}
+
 % Filled image nem zárta össze a szétszagatott struktúrákat
-%{
+
 d_filled = regionprops(d,'FilledImage');
 
 figure(3)
 imshow(uint8(d))
 title('Non max suppression')
 set(gcf, 'Position', [1367 41 1024 651])
-%}
-% imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
 
+imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
+%}
 
 % 4. Hysteresis thresholding
-%{
-a = max(max(d));
-b = mean(mean(d));
-%}
 % Fordított élkeresés --> élkitöltés (tomorrow)
 t1 = 120; % t1-nél nagyobb tutira él
 t2 = 80; % t2-nél kisebb tuti nem él
@@ -953,26 +950,23 @@ for n = 1:size(theta,1)
         end
     end
 end
-%{
-save('d_at_the_end.mat','d')
-%}
 figure(4)
 imshow(uint8(d))
 title('Hysteresis tresholding')
 set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
 % set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
 
-
 imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
-% save('d_empty.mat','d')
+
 %{
+save('d_empty.mat','d')
+
 theta = atan2d(dy,dx); %edge direction
 dd = d;
 figure(4)
 imshow(imfuse(dd,d,'blend'))
 set(gcf,'Position',[1367 -91 1440 783])
-%}
-%{
+
 figure(5)
 subplot(221)
 imshow(uint8(dx))
@@ -986,9 +980,8 @@ title('dy')
 subplot(224)
 imshow(uint8(dyy))
 title('dyy')
+
+writing out the output image
+output_filename = strcat(funghi,filetype);
+imwrite(uint8(d),'d.png');
 %}
-
-
-% writing out the output image
-% output_filename = strcat(funghi,filetype);
-% imwrite(uint8(d),'d.png');
