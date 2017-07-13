@@ -53,7 +53,8 @@ theta = atan2d(dx,dy); %edge direction
 figure(1)
 imshow(uint8(d))
 title('Before adaptive thresholding')
-set(gcf,'Position',[1367 -91 1440 783])
+set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
 % imwrite(uint8(d),'Before_variance_window.png');
 %{
 d_base = d;
@@ -77,7 +78,8 @@ d = Adaptive_thresholding(d,20);
 figure(2)
 imshow(uint8(d))
 title('After adaptive thresholding')
-set(gcf,'Position',[1367 -91 1440 783])
+set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
 imwrite(uint8(d),'After_variance_window.png');
 
 
@@ -599,7 +601,8 @@ end
 figure(3)
 imshow(uint8(d))
 title('Non-max suppresssion')
-set(gcf,'Position',[1367 -91 1440 783])
+set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
 % széleknél 0-ra veszem
 %{
 for n = 1:size(theta,1)
@@ -953,8 +956,9 @@ end
 figure(4)
 imshow(uint8(d))
 title('Hysteresis tresholding')
-set(gcf,'Position',[1367 -91 1440 783]) % labor monitorra
-% set(gcf, 'Position', [1367 41 1024 651]) % otthoni monitorra
+set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva labor monitorra
+% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva labor monitorra
+% set(gcf, 'Position', [1367 41 1024 651]) % jobbra húzva otthoni monitorra
 
 imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
 
@@ -985,3 +989,18 @@ writing out the output image
 output_filename = strcat(funghi,filetype);
 imwrite(uint8(d),'d.png');
 %}
+
+% Non-max backup
+dd = Non_max_backup(d,theta);
+figure(5)
+imshow(dd)
+title('Hysteresis tresholding after non-max backup')
+set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+imwrite(dd,'Non-max_backup.jpg');
+
+
+% d_500 = load('.\matlab.mat');
+% figure(6)
+% imshow(uint8(d_500.d))
+% title('Tájékozódó')
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva

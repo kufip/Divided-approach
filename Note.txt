@@ -4,6 +4,14 @@
 		- a<30 esetén már parazita infó vesztés, de...
 			a=>30-nál viszont nincs számottevõ változás az algoritmus végén
 			Magyarázat: Hysterises step sokkal erõsebb, mint az adaptív értékes metszés
+	
+	- refill the blank part of the parasite edges
+		- ha a Non-max lépést meg tudnánk csinálni visszafelé a Hyster. utáni képre, akkor...
+			a paraziták szelektív jelölésével visszanyerhetnénk az elveszett élszakaszokat
+			- nehézség: parazita körvonalak detektálása
+				5let: új thétát és d mátrixokat számolni, majd a korábbi thétával összevetve kiokumulálni õket --> nem kell jók a régiek is
+		- solution: a már eredetileg is meglévõ vonalakat erõsíti meg, újak csak a vastagodásból eredõen jönnek létre passzívan
+			tehát ez egy fajta dilation
 	- edge enhancement
 		- 
 	
@@ -82,9 +90,10 @@
 		Megjegyzések:
 			- széleknél valamiért csinál egy fehér sávot
 			- labor monitorra:
-				set(gcf,'Position',[1367 -91 1440 783])
+				set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+				set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
 			- otthoni monitorra:
-				set(gcf, 'Position', [1367 41 1024 651])
+				set(gcf, 'Position', [1367 41 1024 651]) % jobbra húzva
 					1.szám = x position
 					2.szám = y position
 					3.szám = screen width
