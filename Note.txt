@@ -1,42 +1,98 @@
 2017.
-07. 13.
-	- adaptív értékes metszés
-		- a<30 esetén már parazita infó vesztés, de...
-			a=>30-nál viszont nincs számottevõ változás az algoritmus végén
-			Magyarázat: Hysterises step sokkal erõsebb, mint az adaptív értékes metszés
+11. 11-14.
+	- SIFT-et alkalmazni Ã©s megÃ­rni a kÃ©pekre
+	- Ãºj algoritmust, algoritmusokat keresni az azonosÃ­tÃ¡sra
+		szÃ­ninformÃ¡ciÃ³k
+		 descriptorok
+		 ... akÃ¡rmi mÃ¡s
+
+11. 10.
+	- base distraction nem mÅ±kÃ¶dik egyÃ©rtelmÅ±en SIFT
+	- SIFT-et elolvasni, mÃ¡snap mÃ¡r tudd alkalmazni
+
+10. 31.
+	- legtÃ¶bbet hasznÃ¡lt szavak megtalÃ¡lÃ¡sÃ¡ra a programot megkeresni amit Evelin javasolt
+
+10. 09.
+	- cikkek Ã¶sszerendÃ©se
+	- Ãºj color cikkek + improved Canny elolvasÃ¡sa
+	- base distractionhÃ¶z SIFT open CV-s vÃ¡ltozatÃ¡t beÃ©pÃ­teni a kÃ³dba
+	- eredmÃ©nyeket szerverre elkezdeni fÃ¶ltÃ¶lteni
+
+09. 29.
+	- avg slider mÃ¡r kÃ¶veti az avg editor Ã©rtÃ©keit
+	
+08. 08.
+	- base minus az adaptive thresholdolÃ³lÃ¡ssal egyÃ¼tt ad jÃ³ eredmÃ©nyt
+		thresholdolÃ¡s nagyon paramÃ©terfÃ¼ggÅ‘
+		funghi a=10
+		hard dirty a=20
+	- SIFT open cv-ben benne van
+		feature keresÅ‘ base distractionre
+			feature-ket fog keresni Ã©s nem a helyeket fogja kivonni egymÃ¡sbÃ³l
+			feature-ket kell majd kivonni egymÃ¡sbÃ³l
+	- szinformÃ¡ciÃ³t belevinni a keresÃ©sbe
+		lokÃ¡lis szÃ­nkÃ¼lÃ¶nbsÃ©geket keresni, ahol van arra mond6juk, hogy az egy belsÅ‘ Ã©l
+		belsÅ‘ Ã©lek kÃ¶zti terek biztosan alakzatok lesznek
+	- az eredeti kÃ©p fÃ¶lbontÃ¡st leskÃ¡lÃ¡zni a Cannyhez -> majd az eredmÃ©nyÃ©t visszaskÃ¡lÃ¡zni
+		Ã©s az Ã­gy kapott eredmÃ©nyt Ã¶sszekapcsolni a korÃ¡bbi Canny eredmÃ©nyÃ©vel
+	- ezeket a kÃ¶lÃ¼nbÃ¶zÅ‘ eredmÃ©nyeket kell majd egybefÅ±zni egy algoritmusba, hogy valÃ³ban 6Ã©kony legyen a detekciÃ³
+	- mÃ©g egy dolog, amin tÃ¶rhetem a fejemet
+		plussz informÃ¡ciÃ³t hogyan lehetne behozni a "kÃ©pbe"
+	- TekÃ¡n
+		- hogyan nÅ‘ a sejt a kÃ¶ralakban
+		- 96 lyukÃº template-s g?G???
+			- sejtek azonosÃ­tÃ¡sa -> eladÃ¡shoz
+	- Liza elindÃ­tÃ¡sÃ¡n gondolkozni
+		Hogy, mint, merre meddig lehetne elindulni
+
+08. 04.
+	- ?it?? algoritmusok keresÅ‘ a neten
+	- holefiller algoritmusokat is
+	- ??ikkek f??lgoz?
+	
+08. 03.
+	- ?it?? algoritmusok keresÅ‘ a neten
+
+08. 02.
+	- ?it?? algoritmusok keres? a neten
+
+7. 13.
+	- adaptÃ­v Ã©rtÃ©kes metszÃ©s
+		- a<30 esetÃ©n mÃ¡r parazita infÃ³ vesztÃ©s, de...
+			a=>30-nÃ¡l viszont nincs szÃ¡mottevÅ‘ vÃ¡ltozÃ¡s az algoritmus vÃ©gÃ©n
+			MagyarÃ¡zat: Hysterises step sokkal erÅ‘sebb, mint az adaptÃ­v Ã©rtÃ©kes metszÃ©s
 	
 	- refill the blank part of the parasite edges
-		- ha a Non-max lépést meg tudnánk csinálni visszafelé a Hyster. utáni képre, akkor...
-			a paraziták szelektív jelölésével visszanyerhetnénk az elveszett élszakaszokat
-			- nehézség: parazita körvonalak detektálása
-				5let: új thétát és d mátrixokat számolni, majd a korábbi thétával összevetve kiokumulálni õket --> nem kell jók a régiek is
-		- solution: a már eredetileg is meglévõ vonalakat erõsíti meg, újak csak a vastagodásból eredõen jönnek létre passzívan
-			tehát ez egy fajta dilation
+		- ha a Non-max lÃ©pÃ©st meg tudnÃ¡nk csinÃ¡lni visszafelÃ© a Hyster. utÃ¡ni kÃ©pre, akkor...
+			a parazitÃ¡k szelektÃ­v jelÃ¶lÃ©sÃ©vel visszanyerhetnÃ©nk az elveszett Ã©lszakaszokat
+			- nehÃ©zsÃ©g: parazita kÃ¶rvonalak detektÃ¡lÃ¡sa
+				5let: Ãºj thÃ©tÃ¡t Ã©s d mÃ¡trixokat szÃ¡molni, majd a korÃ¡bbi thÃ©tÃ¡val Ã¶sszevetve kiokumulÃ¡lni Å‘ket
 	- edge enhancement
 		- 
 	
 07. 12.
-	- distraction mûködik
-	- adaptív értékes metszés
-		- 6ákonyan mûködik, de a threshold értékét még be kell lõni
+	- distraction mÅ±kÃ¶dik
+	- adaptÃ­v Ã©rtÃ©kes metszÃ©s
+		- 6Ã¡konyan mÅ±kÃ¶dik, de a threshold Ã©rtÃ©kÃ©t mÃ©g be kell lÅ‘ni
 			- a<100
-	- Non-max lépésnél ha && helyett || a két szomszéd magnitudra, akkor tisztább éleket kapunk
+	- Non-max lÃ©pÃ©snÃ©l ha && helyett || a kÃ©t szomszÃ©d magnitudra, akkor tisztÃ¡bb Ã©leket kapunk
 	
 07. 11.
-	- isempty() + msgbox() elsõ hívásos próblémára a két OK + a Restore buttonnál is jó megoldás
-	- pontok összekötése
-		- a legtöbb infót a Non-max suppressionnél veszítjük
+	- isempty() + msgbox() elsÅ‘ hÃ­vÃ¡sos prÃ³blÃ©mÃ¡ra a kÃ©t OK + a Restore buttonnÃ¡l is jÃ³ megoldÃ¡s
+	- pontok Ã¶sszekÃ¶tÃ©se
+		- a legtÃ¶bb infÃ³t a Non-max suppressionnÃ©l veszÃ­tjÃ¼k
 
 05. 10. 
-	- imfuse képnél a...
-		- neon zöld a Saturation detector eredménye
-		- rózsaszín a Canny edge detector eredménye
+	- imfuse kÃ©pnÃ©l a...
+		- neon zÃ¶ld a Saturation detector eredmÃ©nye
+		- rÃ³zsaszÃ­n a Canny edge detector eredmÃ©nye
 
 05. 08.
-	A mûtermékekre is egységnyi terület számítás.
+	A mÅ±termÃ©kekre is egysÃ©gnyi terÃ¼let szÃ¡mÃ­tÃ¡s.
 		funghi
-		húscafat
-		egyéb koszok
+		hÃºscafat
+		egyÃ©b koszok
 	
 05. 01.-03.
 	Making a plane with workstations and checkpoints (see more latter)
@@ -46,152 +102,151 @@
 	Working on Canny edge detector
 		Start coding!
 		Noise reduciton (DONE)
-			- a blurr mértékével lehet még javítani a képen
-				- minél jobban elmossuk annál kevésbé fognak a kis zajok, objektumok látszódni
-					5x5-ös Gaussian kernel
-				ÖNLAB!
+			- a blurr mÃ©rtÃ©kÃ©vel lehet mÃ©g javÃ­tani a kÃ©pen
+				- minÃ©l jobban elmossuk annÃ¡l kevÃ©sbÃ© fognak a kis zajok, objektumok lÃ¡tszÃ³dni
+					5x5-Ã¶s Gaussian kernel
+				Ã–NLAB!
 				
 		Gradient intensity and direction calculation (DONE)
 			- Hough transformationt itt kell megejteni
-			- Prewitt kernel méretével lehet még javítani a képen
-				5x5-ös Prewitt kernel --> ilyet nem lehet, ez NO WAY!, ZSÁK UTCA!
-			- bwareafilt a kis élekre = tisztitás
-				nem jó, mert a 'd' double és nem logical --> ZSÁK UTCA!
-			- theta = atan2d(dx,dy) & theta = atan2d(dy,dx) nincs számottevõ különbség
-				mind1 hogy melyiket használjuk
+			- Prewitt kernel mÃ©retÃ©vel lehet mÃ©g javÃ­tani a kÃ©pen
+				5x5-Ã¶s Prewitt kernel --> ilyet nem lehet, ez NO WAY!, ZSÃK UTCA!
+			- bwareafilt a kis Ã©lekre = tisztitÃ¡s
+				nem jÃ³, mert a 'd' double Ã©s nem logical --> ZSÃK UTCA!
+			- theta = atan2d(dx,dy) & theta = atan2d(dy,dx) nincs szÃ¡mottevÅ‘ kÃ¼lÃ¶nbsÃ©g
+				mind1 hogy melyiket hasznÃ¡ljuk
 				
 		Non-maximum suppression (DONE)
-			- szélek kezelése az egyedüli hibaforrás (Solved)
-				- széleknél csak az egyik szomszédos elemnél kell nagyobbnak lennie
-				  ha nem nem tudjuk mivel összehasonlítani, akkor 0-ra vesszük az értékét
-				- másik változat hogy a széleknél, sarkoknál 0-ra veszem
-					nincs sok eredménye --> ZSÁK UTCA!
-			- szétszedi az éleket (lásd after_non_max_supp.jpg & fuse_of_grad_int&non_max.jpg)
-				- a fokbeosztás változtatásával lehet még javítani a képen
-					sok változást ez sem hozott --> ZSÁK UTCA!
-					bár azért még 1x meg lehetne nézni a különbségüket
-				- talán FilledImage segíthet
-					nem, nem segített --> ZSÁK UTCA!
+			- szÃ©lek kezelÃ©se az egyedÃ¼li hibaforrÃ¡s (Solved)
+				- szÃ©leknÃ©l csak az egyik szomszÃ©dos elemnÃ©l kell nagyobbnak lennie
+				  ha nem nem tudjuk mivel Ã¶sszehasonlÃ­tani, akkor 0-ra vesszÃ¼k az Ã©rtÃ©kÃ©t
+				- mÃ¡sik vÃ¡ltozat hogy a szÃ©leknÃ©l, sarkoknÃ¡l 0-ra veszem
+					nincs sok eredmÃ©nye --> ZSÃK UTCA!
+			- szÃ©tszedi az Ã©leket (lÃ¡sd after_non_max_supp.jpg & fuse_of_grad_int&non_max.jpg)
+				- a fokbeosztÃ¡s vÃ¡ltoztatÃ¡sÃ¡val lehet mÃ©g javÃ­tani a kÃ©pen
+					sok vÃ¡ltozÃ¡st ez sem hozott --> ZSÃK UTCA!
+					bÃ¡r azÃ©rt mÃ©g 1x meg lehetne nÃ©zni a kÃ¼lÃ¶nbsÃ©gÃ¼ket
+				- talÃ¡n FilledImage segÃ­thet
+					nem, nem segÃ­tett --> ZSÃK UTCA!
 					
 		Hysteresis thresholding (DONE)
-			- tresholdokat kikísérletezni hogy hol lesznek jó helyen
-				Minden bemenetre mások --> NEM ROBOSZTUS A PROGRAM
+			- tresholdokat kikÃ­sÃ©rletezni hogy hol lesznek jÃ³ helyen
+				Minden bemenetre mÃ¡sok --> NEM ROBOSZTUS A PROGRAM
 				Pl. Funghi:
 						max value = 457
 						t1 = 100
 						t2 = 80
-			- nem csökkentjük az éleket, hanem...
-			  ... pont az ellenkezõjét csináljuk...
-			  ... így a szagatott részeket ki tudnánk tölteni...
-			  ... általunk választott pixel értékekkel, amik...
-			  ... késõbb nagyban megkönnyíthetik a dolgunkat.
-			  NEM SEGÍT, mert szagatottság már a Non-max lépésnél kialakul.
+			- nem csÃ¶kkentjÃ¼k az Ã©leket, hanem...
+			  ... pont az ellenkezÅ‘jÃ©t csinÃ¡ljuk...
+			  ... Ã­gy a szagatott rÃ©szeket ki tudnÃ¡nk tÃ¶lteni...
+			  ... Ã¡ltalunk vÃ¡lasztott pixel Ã©rtÃ©kekkel, amik...
+			  ... kÃ©sÅ‘bb nagyban megkÃ¶nnyÃ­thetik a dolgunkat.
+			  NEM SEGÃT, mert szagatottsÃ¡g mÃ¡r a Non-max lÃ©pÃ©snÃ©l kialakul.
 	
-		Megjegyzések:
-			- széleknél valamiért csinál egy fehér sávot
+		MegjegyzÃ©sek:
+			- szÃ©leknÃ©l valamiÃ©rt csinÃ¡l egy fehÃ©r sÃ¡vot
 			- labor monitorra:
-				set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
-				set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
+				set(gcf,'Position',[1367 -91 1440 783])
 			- otthoni monitorra:
-				set(gcf, 'Position', [1367 41 1024 651]) % jobbra húzva
-					1.szám = x position
-					2.szám = y position
-					3.szám = screen width
-					4.szám = screen height
+				set(gcf, 'Position', [1367 41 1024 651])
+					1.szÃ¡m = x position
+					2.szÃ¡m = y position
+					3.szÃ¡m = screen width
+					4.szÃ¡m = screen height
 
 
 	
 04. 25.
-	Fix megfogató részek az eszközön
-		- szög -> fix pontok -> ROI meghatározása
-	    - nem parazita objektumok kiszûrése
+	Fix megfogatÃ³ rÃ©szek az eszkÃ¶zÃ¶n
+		- szÃ¶g -> fix pontok -> ROI meghatÃ¡rozÃ¡sa
+	    - nem parazita objektumok kiszÅ±rÃ©se
 			Pl. fungus
-				hús cafatok
-				egyéb kosz
-				levegõ buborékok
-			élkereséssel valahogy ezeket elkülöníteni az eszköz szerkezetétõl
-				- élkeresésre 5letek voltak
+				hÃºs cafatok
+				egyÃ©b kosz
+				levegÅ‘ buborÃ©kok
+			Ã©lkeresÃ©ssel valahogy ezeket elkÃ¼lÃ¶nÃ­teni az eszkÃ¶z szerkezetÃ©tÅ‘l
+				- Ã©lkeresÃ©sre 5letek voltak
 					Laplacian operator (out)
 					
 					Canny Edge detector
-						1. futattjuk egy üres eszközre -> alapstuktúra legyen csak (mérés elején megjegyzi az algoritmus)
-						2. futattjuk mérés közben az eszközre (parazita, fungus, húscafatok...)
-						3. a kapott képet kivonom az üresbõl
-							így a szerkezet - ami mérés közben nem változik - kiesik...
-							és csak a paraziták, egyéb objektumok maradnak bent.
+						1. futattjuk egy Ã¼res eszkÃ¶zre -> alapstuktÃºra legyen csak (mÃ©rÃ©s elejÃ©n megjegyzi az algoritmus)
+						2. futattjuk mÃ©rÃ©s kÃ¶zben az eszkÃ¶zre (parazita, fungus, hÃºscafatok...)
+						3. a kapott kÃ©pet kivonom az Ã¼resbÅ‘l
+							Ã­gy a szerkezet - ami mÃ©rÃ©s kÃ¶zben nem vÃ¡ltozik - kiesik...
+							Ã©s csak a parazitÃ¡k, egyÃ©b objektumok maradnak bent.
 							
-					Fényerõsségbõl fakadó hibák kiküszöbölésére:
-						Mozgóablakban a kép pixeleinek a szórását (variancia) megnézem és ahol az ablak 6árán meredeken változni fog...
-						ott lesz parazita vagy más számunkra értelmes stuktúra
-						Az egyéb kis fényerõsségbõl fakadó éleket ki tudjuk szûrni egy adaptív értékkel történõ metszéssel
-						szórás max: parazita, struktúra, egyéb szemét
-						szórás min: megint csak valami
-						és elmetszem mondjuk a max felénél vagy ahol értelmes eredményt fogok kapni
-						CANNY TULAJDONKÉPPEN MEGOLDJA!!!
-						A kis méretû objektumokra jó: Hysteresis után a kis pixeleket el tudjuk távolítani! (egyéb koszokat)
-							Parazita szaturációhoz közeli objektumok esetén a trehold értékét közelíteni kell a parazita szathoz.
+					FÃ©nyerÅ‘ssÃ©gbÅ‘l fakadÃ³ hibÃ¡k kikÃ¼szÃ¶bÃ¶lÃ©sÃ©re:
+						MozgÃ³ablakban a kÃ©p pixeleinek a szÃ³rÃ¡sÃ¡t (variancia) megnÃ©zem Ã©s ahol az ablak 6Ã¡rÃ¡n meredeken vÃ¡ltozni fog...
+						ott lesz parazita vagy mÃ¡s szÃ¡munkra Ã©rtelmes stuktÃºra
+						Az egyÃ©b kis fÃ©nyerÅ‘ssÃ©gbÅ‘l fakadÃ³ Ã©leket ki tudjuk szÅ±rni egy adaptÃ­v Ã©rtÃ©kkel tÃ¶rtÃ©nÅ‘ metszÃ©ssel
+						szÃ³rÃ¡s max: parazita, struktÃºra, egyÃ©b szemÃ©t
+						szÃ³rÃ¡s min: megint csak valami
+						Ã©s elmetszem mondjuk a max felÃ©nÃ©l vagy ahol Ã©rtelmes eredmÃ©nyt fogok kapni
+						CANNY TULAJDONKÃ‰PPEN MEGOLDJA!!!
+						A kis mÃ©retÅ± objektumokra jÃ³: Hysteresis utÃ¡n a kis pixeleket el tudjuk tÃ¡volÃ­tani! (egyÃ©b koszokat)
+							Parazita szaturÃ¡ciÃ³hoz kÃ¶zeli objektumok esetÃ©n a trehold Ã©rtÃ©kÃ©t kÃ¶zelÃ­teni kell a parazita szathoz.
 						
-					ROI meghatározásához egyenesek megtalálása:
+					ROI meghatÃ¡rozÃ¡sÃ¡hoz egyenesek megtalÃ¡lÃ¡sa:
 						Hough transformation
 							Error: szakaszt nem tud megadni
 							Soltuion: probabilistic Hough transformation
-								Hough lines függvény MATLAB-ban
+								Hough lines fÃ¼ggvÃ©ny MATLAB-ban
 									Mathworks
 				
 			
 
 
 04. 24.
-	ImageJ-ben való játszadozás a képpel
-		erosion, dilation, tresholdolások, egyéb modósítgatások a képpel
-			ROI meg6ározása
-				1. Green chanel kiválasztása (Split Channels)
+	ImageJ-ben valÃ³ jÃ¡tszadozÃ¡s a kÃ©ppel
+		erosion, dilation, tresholdolÃ¡sok, egyÃ©b modÃ³sÃ­tgatÃ¡sok a kÃ©ppel
+			ROI meg6Ã¡rozÃ¡sa
+				1. Green chanel kivÃ¡lasztÃ¡sa (Split Channels)
 					ez volt a legjobb
-				2. Játék a Brightness/Contrast értékekkel
-					oszlopokstuktúra jól látszodjon
+				2. JÃ¡tÃ©k a Brightness/Contrast Ã©rtÃ©kekkel
+					oszlopokstuktÃºra jÃ³l lÃ¡tszodjon
 				3. Make binary
-				4. oszlopok közötti távolság lemérése
-					ehhezviszonyítani a ROI sugarát
-						Analyze particles-nél a round value 
-						magába fordult spirál alakú parazita round value = 0.2-0.25
-				5. megfogható paraméterek a ROI meghatározásához
+				4. oszlopok kÃ¶zÃ¶tti tÃ¡volsÃ¡g lemÃ©rÃ©se
+					ehhezviszonyÃ­tani a ROI sugarÃ¡t
+						Analyze particles-nÃ©l a round value 
+						magÃ¡ba fordult spirÃ¡l alakÃº parazita round value = 0.2-0.25
+				5. megfoghatÃ³ paramÃ©terek a ROI meghatÃ¡rozÃ¡sÃ¡hoz
 					Centroid (KP.)
 					Center of mass (TKP.)
-				Mégis csak a szöget kellene megmérni!
+				MÃ©gis csak a szÃ¶get kellene megmÃ©rni!
 04. 20.
-	Fix pontok meghatározása
-		kör alakú oszlopokat meg6ározni, Icy + ImageJ programokkal
-		ezekhez képest sugárirányban meg6ározni a ROI-t
+	Fix pontok meghatÃ¡rozÃ¡sa
+		kÃ¶r alakÃº oszlopokat meg6Ã¡rozni, Icy + ImageJ programokkal
+		ezekhez kÃ©pest sugÃ¡rirÃ¡nyban meg6Ã¡rozni a ROI-t
 		
-	Andrisnak összeszedni a anyagot
-		04. 25-én (kedden) délután konzultáció
+	Andrisnak Ã¶sszeszedni a anyagot
+		04. 25-Ã©n (kedden) dÃ©lutÃ¡n konzultÃ¡ciÃ³
 		
 04. 12.
 	New approaches for edge detection or localize other meaningful parts of the image
-		- ROI meg6ározása
-			azon kívül mindent kinullázni (SOLVED - de csak specifikált esetben)
-			Problem: kamera poríciójától függ, hogy hol lesznek a fix pontok
-			Soluiton: fixpontok meghatározása más módon
-				pl. bezárt szög...
+		- ROI meg6Ã¡rozÃ¡sa
+			azon kÃ­vÃ¼l mindent kinullÃ¡zni (SOLVED - de csak specifikÃ¡lt esetben)
+			Problem: kamera porÃ­ciÃ³jÃ¡tÃ³l fÃ¼gg, hogy hol lesznek a fix pontok
+			Soluiton: fixpontok meghatÃ¡rozÃ¡sa mÃ¡s mÃ³don
+				pl. bezÃ¡rt szÃ¶g...
 			
 			
 			
 			
 			
 04. 07.
-	Megvizsgálni a szaturációs adatokat!
-		2 tresholdot megpróbálni belõni hozzá
-	Algortimus láncolatban megpróbálni gondolkodni
-		lépésrõl lépésre kizárni az egyes zavaró tényezõket a képrõl
-		1. lépés: saturation
-			Cél: eszközt illetve minden gyengén szaturálodó anyagot kiszûrni
-			Result: avg paraméter beállításától függõen a húscafatok nagyrészét ki lehet szûrni
-		2. lépés: 2 treshold szint a szaturációra
-			Cél: trichinellánál erõsebben színezõdõ húscafatokat egy fölsõ trehsold-dal kiszûrni
-			Munka folyamat: treshold érték = 
-				trichinella értékek
-				S + output_bw-nél hagytam abba
-		3. lépés: dinamikus treshold-ok meg6ározása
+	MegvizsgÃ¡lni a szaturÃ¡ciÃ³s adatokat!
+		2 tresholdot megprÃ³bÃ¡lni belÅ‘ni hozzÃ¡
+	Algortimus lÃ¡ncolatban megprÃ³bÃ¡lni gondolkodni
+		lÃ©pÃ©srÅ‘l lÃ©pÃ©sre kizÃ¡rni az egyes zavarÃ³ tÃ©nyezÅ‘ket a kÃ©prÅ‘l
+		1. lÃ©pÃ©s: saturation
+			CÃ©l: eszkÃ¶zt illetve minden gyengÃ©n szaturÃ¡lodÃ³ anyagot kiszÅ±rni
+			Result: avg paramÃ©ter beÃ¡llÃ­tÃ¡sÃ¡tÃ³l fÃ¼ggÅ‘en a hÃºscafatok nagyrÃ©szÃ©t ki lehet szÅ±rni
+		2. lÃ©pÃ©s: 2 treshold szint a szaturÃ¡ciÃ³ra
+			CÃ©l: trichinellÃ¡nÃ¡l erÅ‘sebben szÃ­nezÅ‘dÅ‘ hÃºscafatokat egy fÃ¶lsÅ‘ trehsold-dal kiszÅ±rni
+			Munka folyamat: treshold Ã©rtÃ©k = 
+				trichinella Ã©rtÃ©kek
+				S + output_bw-nÃ©l hagytam abba
+		3. lÃ©pÃ©s: dinamikus treshold-ok meg6Ã¡rozÃ¡sa
 			
 		
 		
@@ -202,55 +257,55 @@
 			Prewitt 1st and 2nd (OFF)
 			Laplace operator (QUITE GOOD)
 			Canny Edge detector (UNDER PROCESSING)
-				a threshold 5letet fölhasználni az intenzitás threshold-okhoz is
+				a threshold 5letet fÃ¶lhasznÃ¡lni az intenzitÃ¡s threshold-okhoz is
 				
-		Az természet baromira zajos. Egész egyszerûen borzasztó bármi értelmeset is kiszûrni
-		ebbõl a zajból. :\
+		Az termÃ©szet baromira zajos. EgÃ©sz egyszerÅ±en borzasztÃ³ bÃ¡rmi Ã©rtelmeset is kiszÅ±rni
+		ebbÅ‘l a zajbÃ³l. :\
 		
-	- PRÓBÁLJUK MEG RÉGIÓKAT MEG6ÁROZNI, ÉS KÖZVELTELNÜL OTT KERESGÉLNI.
+	- PRÃ“BÃLJUK MEG RÃ‰GIÃ“KAT MEG6ÃROZNI, Ã‰S KÃ–ZVELTELNÃœL OTT KERESGÃ‰LNI.
 	
 03. 24.
-	- a plot3-ak kiértékelése után:
-		- kör alakú szûrõn kívül minden mást ki lehet maszkolni
-		- önmagában a intenzitáson alapuló megfogása a parazitáknak kevés,
-		  muszály más dolgokat is beleépíteni az alogritmusba, hogy
-		  az 6ékonyan detektáljon
+	- a plot3-ak kiÃ©rtÃ©kelÃ©se utÃ¡n:
+		- kÃ¶r alakÃº szÅ±rÅ‘n kÃ­vÃ¼l minden mÃ¡st ki lehet maszkolni
+		- Ã¶nmagÃ¡ban a intenzitÃ¡son alapulÃ³ megfogÃ¡sa a parazitÃ¡knak kevÃ©s,
+		  muszÃ¡ly mÃ¡s dolgokat is beleÃ©pÃ­teni az alogritmusba, hogy
+		  az 6Ã©konyan detektÃ¡ljon
 
 03. 22.
-	- mérési eredmények képeire is megcsinálni a plot3-akat, hogy láthassuk a megvilágítás homogenitását
+	- mÃ©rÃ©si eredmÃ©nyek kÃ©peire is megcsinÃ¡lni a plot3-akat, hogy lÃ¡thassuk a megvilÃ¡gÃ­tÃ¡s homogenitÃ¡sÃ¡t
 	
 03. 21.
-	- a plot3-akat a sima és az output_fused képekere is beleírni a szakdolgozatba
-		colorbarokat is hozzátenni
+	- a plot3-akat a sima Ã©s az output_fused kÃ©pekere is beleÃ­rni a szakdolgozatba
+		colorbarokat is hozzÃ¡tenni
 	
 
 
 02. 28.
 	1. step: Space determination
 		- Trying to determine the space with morphological operations, where the trichinellas would be
-		Megjegyzés:
-			- ha a szaturációval dolgozunk akkor a méréseknél nagyon oda kell figyelni,
-				hogy szinte majd mindegyiket azonos megvilágítás mellett vegyük föl
+		MegjegyzÃ©s:
+			- ha a szaturÃ¡ciÃ³val dolgozunk akkor a mÃ©rÃ©seknÃ©l nagyon oda kell figyelni,
+				hogy szinte majd mindegyiket azonos megvilÃ¡gÃ­tÃ¡s mellett vegyÃ¼k fÃ¶l
 			AVG
-			- az avg kivonása a szaturációból sokat elvesz a képbõl
-				avg értékének változtatgatásával a kép szaturációjára szabhatjuk a megoldást
-					ergo a jó megoldáshoz az avg értékét mindig változtatgatnunk kell
-						NO WAY -> a gép dolgozzon az ember helyett és ne fordítva
-			- a CM6-os mérésekhez 1.15*avg jó
+			- az avg kivonÃ¡sa a szaturÃ¡ciÃ³bÃ³l sokat elvesz a kÃ©pbÅ‘l
+				avg Ã©rtÃ©kÃ©nek vÃ¡ltoztatgatÃ¡sÃ¡val a kÃ©p szaturÃ¡ciÃ³jÃ¡ra szabhatjuk a megoldÃ¡st
+					ergo a jÃ³ megoldÃ¡shoz az avg Ã©rtÃ©kÃ©t mindig vÃ¡ltoztatgatnunk kell
+						NO WAY -> a gÃ©p dolgozzon az ember helyett Ã©s ne fordÃ­tva
+			- a CM6-os mÃ©rÃ©sekhez 1.15*avg jÃ³
 			AREA
-			- a CM6-os mérésekhez >15 területszûrés elég
+			- a CM6-os mÃ©rÃ©sekhez >15 terÃ¼letszÅ±rÃ©s elÃ©g
 			
-			FÖLHASZNÁLÓ A TERÜLETET ÉS AZ AVG ÁLLÍTGATHASSA -> GUI
+			FÃ–LHASZNÃLÃ“ A TERÃœLETET Ã‰S AZ AVG ÃLLÃTGATHASSA -> GUI
 			
-		! Vagy mindig állítgatjuk a paramétereket vagy más megoldást keresünk !
+		! Vagy mindig Ã¡llÃ­tgatjuk a paramÃ©tereket vagy mÃ¡s megoldÃ¡st keresÃ¼nk !
 			
-			Utolsó lépésel: morfológiai nyitás, skeletonizálás... már nem szükséges.
-				Ezt is bele lehetne építeni majd, hogy a feölhasználó adhassa meg, mert ha sok van akkor jól jön azért.
+			UtolsÃ³ lÃ©pÃ©sel: morfolÃ³giai nyitÃ¡s, skeletonizÃ¡lÃ¡s... mÃ¡r nem szÃ¼ksÃ©ges.
+				Ezt is bele lehetne Ã©pÃ­teni majd, hogy a feÃ¶lhasznÃ¡lÃ³ adhassa meg, mert ha sok van akkor jÃ³l jÃ¶n azÃ©rt.
 
 	2. step: Substractaction
 		- Cut out the empty spaces between the two object
-		Megjegyzés:
-			- Ha a bináris maszkból számoljuk össze az alakzatok összterületét akkor ez a lépés el is hanyagolható
+		MegjegyzÃ©s:
+			- Ha a binÃ¡ris maszkbÃ³l szÃ¡moljuk Ã¶ssze az alakzatok Ã¶sszterÃ¼letÃ©t akkor ez a lÃ©pÃ©s el is hanyagolhatÃ³
 				if bw2(n,m)==1 -> count+=count;
 
 	3. step: Measurement

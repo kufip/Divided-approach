@@ -1,4 +1,4 @@
-function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
+function [output_image,d] = Canny_edge_detector_func(image,thresh1,thresh2)
 
     % initiation problems
     if nargin~=3 % control the no. of inputs
@@ -13,15 +13,15 @@ function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
         warning('Threshold value(s) = 0!') 
     end
     
-    % 1. Resizing images
-    f = imresize(image,0.5);
+    % 0. Reading the image
+    f = image;
     
-    % 2. Noise reduction with Gaussian kernel
+    % 1. Noise reduction with Gaussian kernel
     f = double(rgb2gray(f));
     Gaussian = fspecial('Gaussian',5);
     f = conv2(f,Gaussian);
     
-    % 3. Gradient intensity and direction calculation
+    % 2. Gradient intensity and direction calculation
     Prewitt_h = fspecial('Prewitt');
     Prewitt_v = [-1 0 1; -1 0 1; -1 0 1];
     dx = conv2(f,Prewitt_h); %horizontal derivative image
@@ -29,10 +29,10 @@ function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
     d = hypot(dx,dy); %gradient intensity
     theta = atan2d(dx,dy); %edge direction
     
-    % 4. Adaptive thresholdnig
+    % 3. Adaptive thresholdnig
     d = Adaptive_thresh(d,20); %eliminate device structure
     
-    % 5. Non-maximum suppression
+    % 4. Non-maximum suppression
     for n = 1:size(theta,1)
         for m = 1:size(theta,2)
             % fölsõ sor (OK)
@@ -288,7 +288,7 @@ function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
         end
     end
 
-    % 6. Hysteresis thresholding
+    % 5. Hysteresis thresholding
     t1 = thresh1;
     t2 = thresh2;
     for n = 1:size(theta,1)
@@ -551,12 +551,11 @@ function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
             end
         end
     end
-    d2=d;
-    % 7. Refilling the edges - connect its to continous lines
+    
+    % 6. Refulfill the edges - connect its to continous lines
     d = Back_load(d);
     
-    % 8. Hole filler
-    d = Hole_filler(d);
     
-    output_image = uint8(d); % ez minek ide?
+    
+    output_image = d; % ez minek ide?
 end

@@ -3,10 +3,12 @@ close all
 clc %clear the Command Window
 
 d_empty = load('.\Mats\Canny edge detector mats\d_empty.mat'); % mindig egy struct-ot fog betölteni,...
+% figure(11)
+% imshow(uint8(d_empty.d));
 % ezért d_empty.d-vel tudom meghívni a d mátrixot benne
 
 % filenamekkel majd elszórakozni - output .png.jpg
-% beolvasásnál esetleg majd számozásos rákérdezés
+% beolvasásnál esetleg majd számozásos rákérdezésél
 sample_0 = '.\sample_2.png';
 sample_1 = '.\sample_3.png';
 funghi = '.\funghi.png';
@@ -23,7 +25,7 @@ str_base = '.\input_images';
 filetype = '.jpg';
 
 % 0. Reading the image
-f = imread(strcat(str_base,medium_dirty));
+f = imread(strcat(str_base,little_dirty));
 %{
 figure(1)
 imshow(f)
@@ -31,16 +33,14 @@ title('Original image')
 set(gcf, 'Position', [1367 41 1024 651])
 %}
 
+figure(10)
+imshow(uint8(f))
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+
 % 1. Noise reduction with Gaussian kernel
 f = double(rgb2gray(f));
 Gaussian = fspecial('Gaussian',5);
 f = conv2(f,Gaussian);
-%{
-figure(1)
-imshow(uint8(f))
-imwrite(uint8(f),'little_dirty_Gaussian.jpg')
-%}
-
 
 % 2. Gradient intensity and direction calculation
 Prewitt_h = fspecial('Prewitt');
@@ -49,42 +49,26 @@ dx = conv2(f,Prewitt_h); %horizontal derivative image
 dy = conv2(f,Prewitt_v); %vertical derivative image
 d = hypot(dx,dy); %gradient intensity
 theta = atan2d(dx,dy); %edge direction
-
+save('d_orig.mat','d');
+d_orig=d;
 figure(1)
 imshow(uint8(d))
-title('Before adaptive thresholding')
-set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
-% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
-% imwrite(uint8(d),'Before_variance_window.png');
-%{
-d_base = d;
-save('d_base.mat', 'd_base')
-dd = load('.\Mats\Canny edge detector mats\d_base.mat');
+title('Little dirty before adaptive thresholding')
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+imwrite(uint8(d),'Para1_after_SIFT.png');
 
+% 3. Adaptive thresholdnig
+d = Adaptive_thresh(d,20);
 figure(2)
-imshow(uint8(d))
-title('Gradient intensity')
-set(gcf, 'Position', [1367 41 1024 651])
-
-ddd = minus(d,dd.d_base);
-%}
-%{
-% imwrite(uint8(d),'Canny_Gradient_intensity.jpg');
-% figure(10)
-% imshow(uint8(d))
-%}
-
-d = Adaptive_thresholding(d,20);
-figure(2)
-imshow(uint8(d))
+imshow(d)
 title('After adaptive thresholding')
-set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
 % set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
-imwrite(uint8(d),'After_variance_window.png');
+imwrite(uint8(d),'Para1_after_adaptive_thresholding_10.png');
+save('d_after_adap.mat','d');
+d_adap=d;
 
-
-
-% 3. Non-maximum suppression
+% 4. Non-maximum suppression
 % széleknél rendesen kezelve
 % theta irányok 6árai --> -22.5-22.5, 22.5-77.5,...
 %{
@@ -598,12 +582,7 @@ for n = 1:size(theta,1)
         end 
     end
 end
-figure(3)
-imshow(uint8(d))
-title('Non-max suppresssion')
-set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
-% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
-% széleknél 0-ra veszem
+% theta irányok 6árai --> -22.5-22.5, + széle 0
 %{
 for n = 1:size(theta,1)
     for m = 1:size(theta,2)
@@ -672,10 +651,16 @@ for n = 1:size(theta,1)
     end
 end
 %}
-%{
+figure(3)
+imshow(uint8(d))
+title('Non-max suppresssion')
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+% set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva
 d_after_non_max_sup = d;
-save('d_after_non_max_sup.mat, 'd_after_non_max_sup')
-load('d_after_non_max_sup.mat')
+imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
+%{
+save('d_after_non_max_sup.mat', 'd_after_non_max_sup');
+load('.\d_after_non_max_sup.mat')
 
 % Filled image nem zárta össze a szétszagatott struktúrákat
 
@@ -686,13 +671,13 @@ imshow(uint8(d))
 title('Non max suppression')
 set(gcf, 'Position', [1367 41 1024 651])
 
-imwrite(uint8(d),'Canny_Non-Maximum_suppression.jpg');
+
 %}
 
-% 4. Hysteresis thresholding
+% 5. Hysteresis thresholding
 % Fordított élkeresés --> élkitöltés (tomorrow)
-t1 = 120; % t1-nél nagyobb tutira él
-t2 = 80; % t2-nél kisebb tuti nem él
+t1 = 150; % t1-nél nagyobb tutira él
+t2 = 120; % t2-nél kisebb tuti nem él
 for n = 1:size(theta,1)
     for m = 1:size(theta,2)
         if t1<=d(n,m)
@@ -953,15 +938,31 @@ for n = 1:size(theta,1)
         end
     end
 end
+d_hyst = d;
 figure(4)
-imshow(uint8(d))
+imshow(d)
 title('Hysteresis tresholding')
-set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva labor monitorra
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva labor monitorra
 % set(gcf,'Position',[1367 -91 1440 783]) % jobbra húzva labor monitorra
 % set(gcf, 'Position', [1367 41 1024 651]) % jobbra húzva otthoni monitorra
-
 imwrite(uint8(d),'Canny_Hysteresis_tresholding.jpg');
 
+% 6. Refulfill the edges - connect its to continous lines
+d_back_load = Back_load(d);
+figure(5)
+imshow(d_back_load)
+title('Back loading - connected lines')
+imwrite(d_back_load,'Back_loading.jpg');
+
+%{
+% Non-max backup
+dd = Non_max_backup(d,theta);
+figure(6)
+imshow(dd)
+title('Hysteresis tresholding after non-max backup')
+% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+imwrite(dd,'Non-max_backup.jpg');
+%}
 %{
 save('d_empty.mat','d')
 
@@ -989,18 +990,26 @@ writing out the output image
 output_filename = strcat(funghi,filetype);
 imwrite(uint8(d),'d.png');
 %}
-
-% Non-max backup
-dd = Non_max_backup(d,theta);
-figure(5)
-imshow(dd)
-title('Hysteresis tresholding after non-max backup')
+%{
+iden = load('.\iden.mat');
+figure(7)
+imshow(iden.dd);
+d_after_adap = load('.\d_after_adap.mat'); % mindig egy struct-ot fog betölteni,...
+d_orig = load('.\d_orig.mat'); % mindig egy struct-ot fog betölteni,...
+figure(12)
+imshow(imfuse(dd, imread('.\Sat_little_dirty_result.jpg')))
+% helping mat
+%{
+d_500 = load('.\help.mat');
+figure(6)
+imshow(uint8(d_500.d))
+title('Tájékozódó')
 set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
-imwrite(dd,'Non-max_backup.jpg');
-
-
-% d_500 = load('.\matlab.mat');
-% figure(6)
-% imshow(uint8(d_500.d))
-% title('Tájékozódó')
-% set(gcf,'Position',[-1439 -91 1440 783]) % balra húzva
+%}
+%{
+% próbálkozások
+% H = vision.Autothresholder;
+% BW = step(H,dd);
+% BW2 = imfill(BW);
+%}
+%}

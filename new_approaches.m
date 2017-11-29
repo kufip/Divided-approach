@@ -122,3 +122,5 @@ set(gcf,'Position',[1367 -91 1440 783])
 % imshow(output_lap)
 % figure(5)
 % imshow(bw_lap)
+%%
+% base distraction with feature detection base on SIFT

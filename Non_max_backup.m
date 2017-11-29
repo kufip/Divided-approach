@@ -1,5 +1,5 @@
 function [d_new] = Non_max_backup(d_prev,theta)
-    % Refill the blank part of the parasite edges
+    % find again the lost parts of parasites edge
     
     d_new = zeros(size(d_prev,1),size(d_prev,2));
     for n = 5:size(theta,1)-4

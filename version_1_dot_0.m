@@ -4,13 +4,14 @@ close all
 dot = '.\input_images\';
 name = 'CMF3_E7_7_Trichinella_live_50mlph_4x_v1_eleje.png'; % name of the input image
 f_name = strcat(dot,name);
-image = imread(f_name);
-%{
+% image = imread('.\medium_dirty.png');
+image = imread('.\FÖT_input.png');
+
 figure(7)
 subplot(331)
 imshow(image)
 title('1. Original image')
-%}
+
 % median filter a színes képen, színcsatornánként
 % it preserves edges while removing noise (Salt&Pepper)
 b = 5;
@@ -90,11 +91,12 @@ title('gaussian 0.5 conv2')
 subplot(236)
 imshow(DOG)
 title('DOG')
+%}
 figure(7)
 subplot(332)
-imshow(DOG)
+imshow(uint8(DOG))
 title('2. Differnce of Gaussain')
-%}
+
 
 %{
 figure(4)
@@ -144,12 +146,12 @@ subplot(234)
 imshow(S_0)
 title('modified img after avg substraction')
 %}
-%{
+
 figure(7)
 subplot(333)
-imshow(S)
+imshow(uint8(S))
 title('3. Saturation')
-%}
+
 
 % Otzu módszer
 level = graythresh(S); % threshold érték meghatározása Otzu módszerrel
@@ -172,12 +174,12 @@ subplot(235)
 imshow(bw_0)
 title('modified binary mask')
 %}
-%{
+
 figure(7)
 subplot(334)
-imshow(bw)
+imshow(uint8(bw))
 title('4. Applying treshold for binary mask')
-%}
+
 
 bw2 = bwmorph(bw, 'open');
 % morfológiai nyitás
@@ -209,17 +211,22 @@ imshow(bw2_0)
 title('after morph. opening with 1.15*avg')
 %}
 
-%{
+
 figure(7)
 subplot(335)
-imshow(bw2)
+imshow(uint8(bw2))
 title('5. Morphological opening')
-%}
+
 % kisméretû objektumok eltávolítása
 % 100 + 15 pixelnél kisebb területû objektumok repülnek
 max_area = 500;
 bw2 = bwareafilt(bw2, [max_area Inf]);
 
+
+figure(7)
+subplot(336)
+imshow(uint8(bw2))
+title('6. Dropping out the small objects')
 
 %{ 
 figure(5)
@@ -237,10 +244,7 @@ title('<90')
 % figure(2)
 % subplot(236)
 
-figure(7)
-subplot(336)
-imshow(bw2)
-title('6. Dropping out the small objects')
+
 %}
 
 %{
@@ -284,13 +288,14 @@ imshow(DOG_a0)
 title('modified')
 %}
 %{
-% figure(3)
-% subplot(132)
-% figure(7)
-% subplot(338)
-% imshow(DOG)
-% title('8. Contrast correction')
+figure(3)
+subplot(132)
 %}
+figure(7)
+subplot(337)
+imshow(uint8(DOG))
+title('7. Contrast correction')
+
 
 % fölösleges foltok, zajok kivétele
 DOG(DOG_0<1) = 0;
@@ -313,12 +318,9 @@ subplot(338)
 imshow(DOG)
 title('8. Contrast correction')
 %}
-%{
-figure(7)
-subplot(339)
-imshow(I_0)
-title('9. Result')
-%}
+
+
+
 %{
 figure(4)
 subplot(133)
@@ -342,7 +344,6 @@ imshow(D_0)
 title('euklideszi távolság')
 %}
 %{
-
 % valamiféle modifikáció, szûrés
 D(D>0.5)=1;
 figure(10)
@@ -417,19 +418,28 @@ title('kis leágazások eltávolítása')
 %}
 
 
+
 % zajok eltávolítása
 output_bw = bwmorph(D, 'clean');
 save('sat_bw_9.mat','output_bw');
 
-figure(10)
-imshow(output_bw)
-figure(11)
-imshow(bw2)
+% figure(10)
+% imshow(output_bw)
+% figure(11)
+% imshow(bw2)
+
+figure(7)
+subplot(338)
+imshow(uint8(output_bw))
+title('8. Geometric operations')
 
 % reprezentációhoz kell
 output_fused = imfuse(image, output_bw);
 
-
+figure(7)
+subplot(339)
+imshow(output_fused)
+title('9. Result')
 
 figure(12)
 imshow(output_fused)

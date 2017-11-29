@@ -17,5 +17,5 @@ Hysteresis thresholding parameters for varios inputs:
 		t2 = 150
 	
 	Megjegyzések:
-		- Az él erőssége a megvilágítástól nagyban függ --> a treshol is ezáltal
+		- Az él erőssége a megvilágítástól nagyban függ --> a treshold is ezáltal
 			él erőssége és a treshold között egyenes arányosság áll fönn

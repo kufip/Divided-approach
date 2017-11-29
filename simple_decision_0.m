@@ -22,7 +22,7 @@ function varargout = simple_decision_0(varargin)
 
 % Edit the above text to modify the response to help simple_decision
 
-% Last Modified by GUIDE v2.5 10-May-2017 14:20:11
+% Last Modified by GUIDE v2.5 11-Jul-2017 11:11:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -101,7 +101,11 @@ function reset_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % here we reset the original image
-global im im2 % global-ra nincs szükség
+global im2 % global-ra nincs szükség
+if isempty(im2)
+    msgbox(sprintf('Cannot restore any previous image!'),'Error','error');
+    return
+end
 axes(handles.saturation);
 imshow(im2);
 axes(handles.Canny);
@@ -130,22 +134,6 @@ function area_editor_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-%{
-% --- Executes on button press in area_editor_button.
-function area_editor_button_Callback(hObject, eventdata, handles)
-% hObject    handle to area_editor_button (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global im max_area slider_val
-% ha 1.-re a területtet hívjuk meg, akkor a legutóbbi használat utolsó
-% slider_val értékével dolgozik
-[output_img ratio] = divided_approach(im,slider_val,max_area);
-axes(handles.saturation)
-imshow(output_img)
-%}
-
-
-
 
 % --- Executes on slider movement.
 function avg_slider_Callback(hObject, eventdata, handles)
@@ -157,12 +145,10 @@ function avg_slider_Callback(hObject, eventdata, handles)
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 global im max_area slider_val
 slider_val = get(hObject,'Value');
-% ha edit_1-ba nem írtunk semmit, és elõször a slider-t használjuk
-% többszöri meghívásra u.a. mint a max_area pushbutton
-% if ~max_area
-%     max_area=0;
-%     return
-% end
+if isempty(max_area) % for first calling
+    msgbox(sprintf('Please, give me area value(s)!'),'Error','error');
+    return
+end
 [output_img ratio] = divided_approach(im,slider_val,max_area); % ratio-t megjelenítését belefûzni!
 axes(handles.saturation)
 imshow(output_img)
@@ -215,6 +201,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+
+
+
 % --- Executes on button press in avg_area_editor_button.
 function avg_area_editor_button_Callback(hObject, eventdata, handles)
 % hObject    handle to avg_area_editor_button (see GCBO)
@@ -222,11 +211,15 @@ function avg_area_editor_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % here we execute the modifications of avg_editor textbox
 global im max_area avg_editor
+if isempty(max_area) || isempty(avg_editor) % for first calling
+    msgbox(sprintf('Please, give me area and/or treshold value(s)!'),'Error','error');
+    return
+end
 [output_img ratio] = divided_approach(im,avg_editor,max_area); % ratio-t megjelenítését belefûzni!
 axes(handles.saturation)
 imshow(output_img)
 set(handles.avg_value_screen,'String',avg_editor);
-% set(handles.avg_slider,'String',num2str(avg_editor));
+set(handles.avg_slider,'Value',avg_editor);
 
 
 
@@ -294,6 +287,10 @@ function thresholds_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global im t1 t2
+if isempty(t1) || isempty(t2) % for first calling
+    msgbox(sprintf('Please, give me trehold value(s)!'),'Error','error');
+    return
+end
 [output_img] = Canny_edge_detector_func(im,t1,t2);
 axes(handles.Canny)
 imshow(output_img)
@@ -321,9 +318,9 @@ function fuse_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global im im2 max_area avg_editor t1 t2
-[output_img_sat ratio] = divided_approach(im,avg_editor,max_area);
+[output_img_sat output_bw] = divided_approach(im,avg_editor,max_area);
 [output_img_Canny] = Canny_edge_detector_func(im,t1,t2);
-fused = imfuse(output_img_sat,output_img_Canny);
+fused = imfuse(output_bw,output_img_Canny);
 axes(handles.saturation);
 imshow(im2);
 axes(handles.Canny);
