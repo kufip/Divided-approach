@@ -1,0 +1,7 @@
+function [no_of_parasites] = Parasite_counting(image,t1,t2)
+% Counting the parasites based on its average size
+    [~, BW] = Canny_edge_detector_func(image,t1,t2);
+    BW_largest = bwareafilt(BW,[549 inf]);
+    CC_largest = bwconncomp(BW_largest);
+    avg_size = 960; % based on measurement
+end

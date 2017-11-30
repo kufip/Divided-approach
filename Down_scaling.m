@@ -2,26 +2,28 @@ clear all
 close all
 clc
 % Canny edge detector
-I = imread('D:\ITK\Microfluid\2016_2017_02\Results\image processing\counting\trichinella\Divided approach\input_images\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_para6.png');
+I = imread('D:\ITK\Microfluid\2016_2017_02\Results\image processing\counting\trichinella\Divided approach\input_images\CMF3_E7_7_Trichinella_live_50mlph_4x_v1_eleje.png');
 % Ir2 = imresize(I,1/2);
-[~, BW] = Canny_edge_detector_func(I,150,120);
+[~, BW,] = Canny_edge_detector_func(I,150,120);
 % imwrite(imresize(IrC2,2), 'Rescaled_Canny_0.5.png')
 figure, imshow(I), figure, imshow(BW), title('Ir+C 0.5'),
 
 CC = bwconncomp(BW);
 
-BW_largest = bwareafilt(BW,5);
+BW_largest = bwareafilt(BW,[549 inf]); % felsõ korlát csak az infinity lehet, mert sok képen össze vannak ragadva
 figure, imshow(BW_largest)
 CC_largest = bwconncomp(BW_largest);
 
-% a = CC_largest.NumObjects;
+avg_size = 960;
 sum_pixel=0;
 for n=1:CC_largest.NumObjects
     sum_pixel = sum_pixel + size(CC_largest.PixelIdxList{1,n},1);
 end
 
-parasite_avg_pixel_size = sum_pixel/6;% CC_largest.NumObjects;
+number_of_parasites = sum_pixel/avg_size;% CC_largest.NumObjects;
 
+
+% a = CC_largest.NumObjects;
 
 % Hole filler
 %{

@@ -22,7 +22,7 @@ function varargout = simple_decision_0(varargin)
 
 % Edit the above text to modify the response to help simple_decision
 
-% Last Modified by GUIDE v2.5 30-Nov-2017 06:37:05
+% Last Modified by GUIDE v2.5 11-Jul-2017 11:11:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -101,7 +101,7 @@ function reset_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % here we reset the original image
-global im2 % global-ra nincs sz¸ksÈg
+global im2 % global-ra nincs sz√ºks√©g
 if isempty(im2)
     msgbox(sprintf('Cannot restore any previous image!'),'Error','error');
     return
@@ -149,7 +149,7 @@ if isempty(max_area) % for first calling
     msgbox(sprintf('Please, give me area value(s)!'),'Error','error');
     return
 end
-[output_img,~] = Zsiros_Peter_modified_finding_algorithm(im,slider_val,max_area); % ratio-t megjelenÌtÈsÈt belef˚zni!
+[output_img ratio] = divided_approach(im,slider_val,max_area); % ratio-t megjelen√≠t√©s√©t belef≈±zni!
 axes(handles.saturation)
 imshow(output_img)
 set(handles.avg_value_screen,'String',num2str(slider_val));
@@ -215,11 +215,30 @@ if isempty(max_area) || isempty(avg_editor) % for first calling
     msgbox(sprintf('Please, give me area and/or treshold value(s)!'),'Error','error');
     return
 end
-[output_img,~] = Zsiros_Peter_modified_finding_algorithm(im,avg_editor,max_area);
+[output_img ratio] = divided_approach(im,avg_editor,max_area); % ratio-t megjelen√≠t√©s√©t belef≈±zni!
 axes(handles.saturation)
 imshow(output_img)
 set(handles.avg_value_screen,'String',avg_editor);
 set(handles.avg_slider,'Value',avg_editor);
+
+
+
+
+% --- Executes on button press in save_sat_button.
+function save_sat_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_sat_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% here we execute the saving of output images
+global im
+axes(handles.saturation);
+[im,user_canceled] = imsave(); % OPEN IMAGE dialog box
+if user_canceled
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
+    return
+end
+
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -272,69 +291,51 @@ if isempty(t1) || isempty(t2) % for first calling
     msgbox(sprintf('Please, give me trehold value(s)!'),'Error','error');
     return
 end
-[output_img] = Canny_edge_detector_func(im,t1,t2);
+[~,output_img] = Canny_edge_detector_func(im,t1,t2);
 axes(handles.Canny)
 imshow(output_img)
 
 
 
-% --- Executes on button press in count_button.
-function count_button_Callback(hObject, eventdata, handles)
-% hObject    handle to count_button (see GCBO)
+
+% --- Executes on button press in save_Canny_button.
+function save_Canny_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_Canny_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global im avg_editor max_area t1 t2
-
-[~,parasites_bw] = Zsiros_Peter_modified_finding_algorithm(im,avg_editor,max_area);
-[no_of_parasites_1] = Zsiros_Peter_counting_algorithm(parasites_bw);
-set(handles.saturation_count_screen,'String',num2str(no_of_parasites_1));
-
-if isempty(t1) || isempty(t2) % for first calling
-    msgbox(sprintf('Please, give me trehold value(s)!'),'Error','error');
+global im
+axes(handles.Canny);
+[im,user_canceled] = imsave(); % OPEN IMAGE dialog box
+if user_canceled
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
     return
 end
-[no_of_parasites_2,BW_largest] = Parasite_counting(im,t1,t2);
-set(handles.Canny_count_screen,'String',num2str(no_of_parasites_2));
-axes(handles.Canny)
-imshow(BW_largest)
 
 
-
-% --- Executes during object creation, after setting all properties.
-function saturation_count_screen_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to saturation_count_screen (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-function saturation_count_screen_Callback(hObject, eventdata, handles)
-% hObject    handle to saturation_count_screen (see GCBO)
+% --- Executes on button press in fuse_button.
+function fuse_button_Callback(hObject, eventdata, handles)
+% hObject    handle to fuse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global im im2 max_area avg_editor t1 t2
+[output_img_sat output_bw] = divided_approach(im,avg_editor,max_area);
+[output_img_Canny] = Canny_edge_detector_func(im,t1,t2);
+fused = imfuse(output_bw,output_img_Canny);
+axes(handles.saturation);
+imshow(im2);
+axes(handles.Canny);
+imshow(fused);
 
-% Hints: get(hObject,'String') returns contents of saturation_count_screen as text
-%        str2double(get(hObject,'String')) returns contents of saturation_count_screen as a double
 
-
-% --- Executes during object creation, after setting all properties.
-function Canny_count_screen_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to Canny_count_screen (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-function Canny_count_screen_Callback(hObject, eventdata, handles)
-% hObject    handle to Canny_count_screen (see GCBO)
+% --- Executes on button press in save_fuse_button.
+function save_fuse_button_Callback(hObject, eventdata, handles)
+% hObject    handle to save_fuse_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of Canny_count_screen as text
-%        str2double(get(hObject,'String')) returns contents of Canny_count_screen as a double
+global im
+axes(handles.Canny);
+[im,user_canceled] = imsave(); % OPEN IMAGE dialog box
+if user_canceled
+    msgbox(sprintf('Cannot save the image!'),'Error','error');
+    return
+end

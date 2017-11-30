@@ -1,4 +1,4 @@
-Hysteresis thresholding parameters for varios inputs:
+Hysteresis thresholding parameters for various inputs:
 	- Funghi:
 		max value = 457
 		t1 = 100

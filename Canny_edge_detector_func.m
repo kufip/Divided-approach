@@ -1,4 +1,4 @@
-function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
+function [d] = Canny_edge_detector_func(image,thresh1,thresh2)
 
     % initiation problems
     if nargin~=3 % control the no. of inputs
@@ -551,12 +551,10 @@ function [output_image,d,d2] = Canny_edge_detector_func(image,thresh1,thresh2)
             end
         end
     end
-    d2=d;
+    
     % 7. Refilling the edges - connect its to continous lines
     d = Back_load(d);
     
     % 8. Hole filler
     d = Hole_filler(d);
-    
-    output_image = uint8(d); % ez minek ide?
 end
